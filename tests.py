@@ -33,7 +33,7 @@ class TestDeepSearch(unittest.TestCase):
         # Returned dict is reference to haystack
         deepest_dict['test'] = True
         self.assertIsNotNone(haystack['foo']['bar']['baz']['test'])
-    
+
     def test_deep_search_overwrite_none(self):
         haystack = {
             'foo': {
