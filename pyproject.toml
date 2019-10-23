@@ -6,6 +6,5 @@ legacy_tox_ini = """
 [tox]
 envlist = py36,flake8
 [testenv]
-deps = unittest
 commands = unittest discover -s tests
 """
