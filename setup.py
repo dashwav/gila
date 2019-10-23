@@ -1,12 +1,13 @@
 from setuptools import setup, find_packages
+import os
 
-with open('.version') as v:
+with open(os.path.join(os.path.dirname(__file__), '.version')) as v:
     version = v.read()
 
-with open('README.md') as r:
+with open(os.path.join(os.path.dirname(__file__), 'README.md')) as r:
     readme = r.read()
 
-with open('requirements.txt') as req:
+with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as req:
     requirements = req.read().splitlines()
 
 package_data = {
