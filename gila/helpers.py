@@ -1,10 +1,11 @@
 """
-Misc functions to clean up ain file
+Misc functions to clean up main file
 """
 from typing import List
+from yaml import load
 
 
-def deep_search(haystack: dict, path: List[str]):
+def deep_search(haystack: dict, keypath: List[str]):
     """
     If path = ["foo", "bar", "baz"]
     The assumed values are:
@@ -22,10 +23,10 @@ def deep_search(haystack: dict, path: List[str]):
     """
     if not isinstance(haystack, dict):
         raise TypeError()
-    if not isinstance(path, list):
+    if not isinstance(keypath, list):
         raise TypeError()
     to_search = haystack
-    for item in path:
+    for item in keypath:
         if item not in to_search:
             # to_search[item] is not set, create dict and continue
             to_search[item] = {}
@@ -38,3 +39,11 @@ def deep_search(haystack: dict, path: List[str]):
             to_search[item] = {}
         to_search = to_search[item]
     return to_search
+
+
+def yaml_to_dict(filepath: str):
+    try:
+        with open(filepath, 'r') as yml_config:
+            return load(yml_config)
+    except Exception:
+        return None

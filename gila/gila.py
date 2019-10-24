@@ -1,8 +1,8 @@
 """
 This is the main file for the Gila library
 """
-from typing import Any
-from utils import deep_search
+from typing import List, Any
+from .helpers import deep_search, yaml_to_dict
 from os import path
 
 _supported_exts = ["yaml", "yml"]
@@ -79,6 +79,41 @@ class Gila():
                 return path.join(filepath, f'{self.__config_name}.{ext}')
         return None
 
+    def __search_dict(self, to_search: dict, path: List[str]):
+        # End case
+        if len(path) == 0:
+            return to_search
+
+        if path[0] in to_search:
+            # Fast return
+            if len(path) == 1:
+                return to_search[path[0]]
+
+            # Continue
+            if isinstance(dict, to_search[path[0]]):
+                return self.__search_dict(to_search[path[0]], path[1:])
+
+            # Value received, dict expected
+            return None
+
+    def __search_dict_with_prefix(self, to_search: dict, path: List[str]):
+        if len(path) == 0:
+            return to_search
+
+        for index, item in enumerate(path):
+            delim = self.__key_delim
+            key_prefix = delim.join(path[0:index])
+
+            if key_prefix in to_search:
+                if index == len(path):
+                    return to_search[key_prefix]
+                if isinstance(dict, to_search[key_prefix]):
+                    value = self.__search_dict_with_prefix(
+                        to_search[key_prefix], path[index:])
+                if value:
+                    return value
+        return None
+
     def __find_config_file(self):
         found_config = None
         for config_path in self.__config_paths:
@@ -114,7 +149,9 @@ class Gila():
         self.__aliases[alias] = key
 
     def __real_key(self, key: str):
-        found_key = self.__aliases[key]
+        found_key = None
+        if key in self.__aliases:
+            found_key = self.__aliases[key]
         if found_key:
             return self.__real_key(found_key)
         return key
@@ -152,11 +189,11 @@ class Gila():
         """
         filename = self.__get_config_file()
 
-        if self.__get_config_file not in self.__supported_exts:
+        if self.__get_config_type not in self.__supported_exts:
             return
             # TODO: add config not supported error
-        return filename
-        # TODO: Read in file
+        config = yaml_to_dict(filename)
+        self.__config = config
 
     def __bind_env(self, key: str, env_key: str = None):
         if not key:
@@ -167,8 +204,14 @@ class Gila():
             env_key = self.__merge_with_env_prefix(key)
         self.__env[key] = env_key
 
-    def __find(self, lower_key: str):
+    def get(self, key: str):
+        return self.__find(key)
 
+    def __find(self, key: str):
+        # TODO: Add isDeepShadow stuff here
+        real_key = self.__real_key(key)
+        if real_key in self.__overrides:
+            return self.__overrides[real_key]
         # TODO: Overrides by set()
         # TODO: Command Flags
         # TODO: ENV Vars
