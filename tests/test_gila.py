@@ -37,7 +37,6 @@ class TestGila(unittest.TestCase):
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
         gila.read_in_config()
-        gila.debug()
         self.assertEqual(True, gila.get("exists"))
 
 
