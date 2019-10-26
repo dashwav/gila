@@ -9,6 +9,7 @@ from os import environ as os_env
 _supported_exts = ["yaml", "yml"]
 _key_delim = "."
 
+
 class Gila():
     """
     An instance of the config store
@@ -76,7 +77,7 @@ class Gila():
 
     def __search_in_path(self, filepath: str):
         for ext in self.__supported_exts:
-            if path.exists(os_path.join(filepath, f'{self.__config_name}.{ext}')):
+            if os_path.exists(os_path.join(filepath, f'{self.__config_name}.{ext}')):
                 return os_path.join(filepath, f'{self.__config_name}.{ext}')
         return None
 
