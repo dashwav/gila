@@ -220,7 +220,7 @@ class Gila():
     def __is_path_shadowed_in_auto_env(self, path: List[str]):
         for index, item in enumerate(path):
             parent_key = self.__key_delim.join(path[0:index])
-            value = os_environ.get(self.__merge_with_env_prefix(parent_key))
+            value = os_env.get(self.__merge_with_env_prefix(parent_key))
             if value:
                 return parent_key
         return None
@@ -242,7 +242,8 @@ class Gila():
         path = key.split(self.__key_delim)
         nested = len(path) > 1
 
-        path_shadow = self.__is_path_shadowed_in_deep_dict(path, self.__aliases)
+        path_shadow = self.__is_path_shadowed_in_deep_dict(
+            path, self.__aliases)
         if nested and path_shadow:
             return None
 
@@ -255,7 +256,8 @@ class Gila():
         found_value = self.__search_dict(self.__overrides, path)
         if found_value:
             return found_value
-        path_shadow = self.__is_path_shadowed_in_flat_dict(path, self.__overrides)
+        path_shadow = self.__is_path_shadowed_in_flat_dict(
+            path, self.__overrides)
         if nested and path_shadow:
             return None
 
@@ -264,7 +266,7 @@ class Gila():
         
         # Search ENV vars
         if self.__automatic_env_applied:
-            value = os_environ.get(self.__merge_with_env_prefix(key))
+            value = os_env.get(self.__merge_with_env_prefix(key))
             if value:
                 return value
             path_shadow = self.__is_path_shadowed_in_auto_env(path)
@@ -273,7 +275,7 @@ class Gila():
 
         if key in self.__env:
             env_key = self.__env[key]
-            value = environ.get(env_key)
+            value = os_env.get(env_key)
             if value:
                 return value
         path_shadow = self.__is_path_shadowed_in_flat_dict(path, self.__env)
@@ -306,38 +308,55 @@ Singleton functionality
 
 _gila = Gila()
 
+
+def reset():
+    global _gila
+    _gila = Gila()
+
+
 def set_config_type(filetype: str):
     return _gila.set_config_file(filetype)
+
 
 def set_config_name(filename: str):
     return _gila.set_config_name(filename)
 
+
 def set_config_file(filepath: str):
     return _gila.set_config_file(filepath)
+
 
 def add_config_path(filepath: str):
     return _gila.set_config_path(filepath)
 
+
 def set_env_prefix(prefix: str):
     return _gila.set_env_prefix(prefix)
+
 
 def is_set(key: str):
     return _gila.is_set(key)
 
+
 def in_config(key: str):
     return _gila.in_config(key)
+
 
 def set_default(key: str, value: Any):
     return _gila.set_default(key, value)
 
+
 def set(key: str, value: Any):
     return _gila.set(key, value)
+
 
 def read_in_config():
     return _gila.read_in_config()
 
+
 def get(key: str):
     return _gila.get(key)
+
 
 def debug():
     return _gila.debug()
