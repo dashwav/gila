@@ -55,7 +55,7 @@ class Gila():
     def __get_config_type(self):
         if not self.__config_type:
             filepath = self.__get_config_file()
-            filename, file_extension = path.splitext(filepath)
+            filename, file_extension = os_path.splitext(filepath)
             return file_extension
         return self.__config_type
 
@@ -77,7 +77,8 @@ class Gila():
 
     def __search_in_path(self, filepath: str):
         for ext in self.__supported_exts:
-            if os_path.exists(os_path.join(filepath, f'{self.__config_name}.{ext}')):
+            if os_path.exists(os_path.join(
+                    filepath, f'{self.__config_name}.{ext}')):
                 return os_path.join(filepath, f'{self.__config_name}.{ext}')
         return None
 
@@ -302,6 +303,7 @@ class Gila():
         print(f'Env: {self.__env}\n')
         print(f'Config: {self.__config}\n')
         print(f'Defaults: {self.__defaults}\n')
+
 
 """
 Singleton functionality
