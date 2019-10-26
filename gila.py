@@ -6,7 +6,7 @@ from util.helpers import deep_search, yaml_to_dict
 from os import path as os_path
 from os import environ as os_env
 
-_supported_exts = ["yaml", "yml"]
+_supported_exts = [".yaml", ".yml"]
 _key_delim = "."
 
 
@@ -78,8 +78,8 @@ class Gila():
     def __search_in_path(self, filepath: str):
         for ext in self.__supported_exts:
             if os_path.exists(os_path.join(
-                    filepath, f'{self.__config_name}.{ext}')):
-                return os_path.join(filepath, f'{self.__config_name}.{ext}')
+                    filepath, f'{self.__config_name}{ext}')):
+                return os_path.join(filepath, f'{self.__config_name}{ext}')
         return None
 
     def __search_dict(self, to_search: dict, path: List[str]):
@@ -104,7 +104,8 @@ class Gila():
         if len(path) == 0:
             return to_search
 
-        for index, item in enumerate(path):
+        for index in range(len(path), 0, -1):
+            value = None
             delim = self.__key_delim
             key_prefix = delim.join(path[0:index])
 
@@ -192,8 +193,8 @@ class Gila():
         Will read in config from file
         """
         filename = self.__get_config_file()
-
-        if self.__get_config_type not in self.__supported_exts:
+        config_type = self.__get_config_type()
+        if config_type not in self.__supported_exts:
             return
             # TODO: add config not supported error
         config = yaml_to_dict(filename)
@@ -330,7 +331,7 @@ def set_config_file(filepath: str):
 
 
 def add_config_path(filepath: str):
-    return _gila.set_config_path(filepath)
+    return _gila.add_config_path(filepath)
 
 
 def set_env_prefix(prefix: str):
