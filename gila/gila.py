@@ -3,7 +3,7 @@ This is the main file for the Gila library
 """
 from typing import List, Any
 from .helpers import deep_search, yaml_to_dict
-from os import path
+from os import path, environ
 
 _supported_exts = ["yaml", "yml"]
 _key_delim = "."
@@ -195,6 +195,34 @@ class Gila():
         config = yaml_to_dict(filename)
         self.__config = config
 
+    def __is_path_shadowed_in_deep_dict(self, path: List[str], to_check: dict):
+        parent_val = None
+        for index, item in enumerate(path):
+            parent_val = self.__search_dict(to_check, path[0:index])
+            if not parent_val:
+                return None
+            if isinstance(dict, parent_val):
+                continue
+            return path[0:index].join(self.__key_delim)
+        return None
+
+    def __is_path_shadowed_in_flat_dict(self, path: List[str], to_check: Any):
+        if not isinstance(dict, to_check):
+            return None
+        for index, item in enumerate(path):
+            parent_key = path[0:index].join(self.__key_delim)
+            if parent_key in to_check:
+                return parent_key
+        return None
+
+    def __is_path_shadowed_in_auto_env(self, path: List[str]):
+        for index, item in enumerate(path):
+            parent_key = path[0:index].join(self.__key_delim)
+            value = environ.get(self.__merge_with_env_prefix(parent_key))
+            if value:
+                return parent_key
+        return None
+
     def __bind_env(self, key: str, env_key: str = None):
         if not key:
             return
@@ -218,5 +246,3 @@ class Gila():
         # TODO: Config File
         # TODO: Defaults
         return None
-
-    # TODO: Add alias functionality
