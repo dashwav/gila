@@ -1,6 +1,6 @@
 import unittest
 
-import gila.gila as gila
+import gila
 
 
 class TestGila(unittest.TestCase):
