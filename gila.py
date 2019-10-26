@@ -265,7 +265,7 @@ class Gila():
 
         # TODO: Command Flags
         # Are command flags even going to be possible easily?
-        
+
         # Search ENV vars
         if self.__automatic_env_applied:
             value = os_env.get(self.__merge_with_env_prefix(key))
