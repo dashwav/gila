@@ -9,7 +9,6 @@ from os import environ as os_env
 _supported_exts = ["yaml", "yml"]
 _key_delim = "."
 
-
 class Gila():
     """
     An instance of the config store
@@ -300,3 +299,45 @@ class Gila():
         print(f'Env: {self.__env}\n')
         print(f'Config: {self.__config}\n')
         print(f'Defaults: {self.__defaults}\n')
+
+"""
+Singleton functionality
+"""
+
+_gila = Gila()
+
+def set_config_type(filetype: str):
+    return _gila.set_config_file(filetype)
+
+def set_config_name(filename: str):
+    return _gila.set_config_name(filename)
+
+def set_config_file(filepath: str):
+    return _gila.set_config_file(filepath)
+
+def add_config_path(filepath: str):
+    return _gila.set_config_path(filepath)
+
+def set_env_prefix(prefix: str):
+    return _gila.set_env_prefix(prefix)
+
+def is_set(key: str):
+    return _gila.is_set(key)
+
+def in_config(key: str):
+    return _gila.in_config(key)
+
+def set_default(key: str, value: Any):
+    return _gila.set_default(key, value)
+
+def set(key: str, value: Any):
+    return _gila.set(key, value)
+
+def read_in_config():
+    return _gila.read_in_config()
+
+def get(key: str):
+    return _gila.get(key)
+
+def debug():
+    return _gila.debug()
