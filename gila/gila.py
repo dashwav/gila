@@ -3,7 +3,8 @@ This is the main file for the Gila library
 """
 from typing import List, Any
 from .helpers import deep_search, yaml_to_dict
-from os import path, environ
+from os import path as os_path
+from os import environ as os_env
 
 _supported_exts = ["yaml", "yml"]
 _key_delim = "."
@@ -19,6 +20,7 @@ class Gila():
         self.__supported_exts = _supported_exts
         self.__key_delim = _key_delim
         self.__config_paths = []
+        self.__automatic_env_applied = False
         self.__config_name = None
         self.__config_type = None
         self.__config_file = None
@@ -75,8 +77,8 @@ class Gila():
 
     def __search_in_path(self, filepath: str):
         for ext in self.__supported_exts:
-            if path.exists(path.join(filepath, f'{self.__config_name}.{ext}')):
-                return path.join(filepath, f'{self.__config_name}.{ext}')
+            if path.exists(os_path.join(filepath, f'{self.__config_name}.{ext}')):
+                return os_path.join(filepath, f'{self.__config_name}.{ext}')
         return None
 
     def __search_dict(self, to_search: dict, path: List[str]):
@@ -90,12 +92,13 @@ class Gila():
                 return to_search[path[0]]
 
             # Continue
-            if isinstance(dict, to_search[path[0]]):
+            if isinstance(to_search[path[0]], dict):
                 return self.__search_dict(to_search[path[0]], path[1:])
 
             # Value received, dict expected
             return None
 
+    # TODO: swap position of arguments to match other functions
     def __search_dict_with_prefix(self, to_search: dict, path: List[str]):
         if len(path) == 0:
             return to_search
@@ -107,7 +110,7 @@ class Gila():
             if key_prefix in to_search:
                 if index == len(path):
                     return to_search[key_prefix]
-                if isinstance(dict, to_search[key_prefix]):
+                if isinstance(to_search[key_prefix], dict):
                     value = self.__search_dict_with_prefix(
                         to_search[key_prefix], path[index:])
                 if value:
@@ -201,24 +204,24 @@ class Gila():
             parent_val = self.__search_dict(to_check, path[0:index])
             if not parent_val:
                 return None
-            if isinstance(dict, parent_val):
+            if isinstance(parent_val, dict):
                 continue
-            return path[0:index].join(self.__key_delim)
+            return self.__key_delim.join(path[0:index])
         return None
 
     def __is_path_shadowed_in_flat_dict(self, path: List[str], to_check: Any):
-        if not isinstance(dict, to_check):
+        if not isinstance(to_check, dict):
             return None
         for index, item in enumerate(path):
-            parent_key = path[0:index].join(self.__key_delim)
+            parent_key = self.__key_delim.join(path[0:index])
             if parent_key in to_check:
                 return parent_key
         return None
 
     def __is_path_shadowed_in_auto_env(self, path: List[str]):
         for index, item in enumerate(path):
-            parent_key = path[0:index].join(self.__key_delim)
-            value = environ.get(self.__merge_with_env_prefix(parent_key))
+            parent_key = self.__key_delim.join(path[0:index])
+            value = os_environ.get(self.__merge_with_env_prefix(parent_key))
             if value:
                 return parent_key
         return None
@@ -236,13 +239,64 @@ class Gila():
         return self.__find(key)
 
     def __find(self, key: str):
-        # TODO: Add isDeepShadow stuff here
-        real_key = self.__real_key(key)
-        if real_key in self.__overrides:
-            return self.__overrides[real_key]
-        # TODO: Overrides by set()
+        found_value = None
+        path = key.split(self.__key_delim)
+        nested = len(path) > 1
+
+        path_shadow = self.__is_path_shadowed_in_deep_dict(path, self.__aliases)
+        if nested and path_shadow:
+            return None
+
+        # Get real_key from aliases
+        key = self.__real_key(key)
+        path = key.split(self.__key_delim)
+        nested = len(path) > 1
+
+        # Search overrides
+        found_value = self.__search_dict(self.__overrides, path)
+        if found_value:
+            return found_value
+        path_shadow = self.__is_path_shadowed_in_flat_dict(path, self.__overrides)
+        if nested and path_shadow:
+            return None
+
         # TODO: Command Flags
-        # TODO: ENV Vars
-        # TODO: Config File
-        # TODO: Defaults
+        # Are command flags even going to be possible easily?
+        
+        # Search ENV vars
+        if self.__automatic_env_applied:
+            value = os_environ.get(self.__merge_with_env_prefix(key))
+            if value:
+                return value
+            path_shadow = self.__is_path_shadowed_in_auto_env(path)
+            if nested and path_shadow:
+                return None
+
+        if key in self.__env:
+            env_key = self.__env[key]
+            value = environ.get(env_key)
+            if value:
+                return value
+        path_shadow = self.__is_path_shadowed_in_flat_dict(path, self.__env)
+        if nested and path_shadow:
+            return None
+
+        # Search Config vars
+        value = self.__search_dict_with_prefix(self.__config, path)
+        if value:
+            return value
+        path_shadow = self.__is_path_shadowed_in_deep_dict(path, self.__config)
+        if nested and path_shadow:
+            return None
+
+        value = self.__search_dict(self.__defaults, path)
+        if value:
+            return value
         return None
+
+    def debug(self):
+        print(f'Aliases: {self.__aliases}\n')
+        print(f'Override: {self.__overrides}\n')
+        print(f'Env: {self.__env}\n')
+        print(f'Config: {self.__config}\n')
+        print(f'Defaults: {self.__defaults}\n')
