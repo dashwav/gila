@@ -2,7 +2,7 @@
 Misc functions to clean up main file
 """
 from typing import List
-from yaml import load
+from yaml import safe_load
 
 
 def deep_search(haystack: dict, keypath: List[str]):
@@ -44,6 +44,6 @@ def deep_search(haystack: dict, keypath: List[str]):
 def yaml_to_dict(filepath: str):
     try:
         with open(filepath, 'r') as yml_config:
-            return load(yml_config)
+            return safe_load(yml_config)
     except Exception:
         return None
