@@ -81,9 +81,8 @@ def toml_to_dict(filepath: str):
 
 
 def hcl_to_dict(filepath: str):
-    # try:
-    with open(filepath, 'r') as hcl_config:
-        return hcl_load(hcl_config)
-    # except Exception:
-    #     print("exception")
-    #     return None
+    try:
+        with open(filepath, 'r') as hcl_config:
+            return hcl_load(hcl_config)
+    except Exception:
+        return None
