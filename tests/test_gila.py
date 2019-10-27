@@ -87,6 +87,14 @@ class TestGila(unittest.TestCase):
         self.assertEqual('string', gila.get("contents.filetype.value_type"))
         self.assertIsNone(gila.get("contents"))
 
+    def test_read_in_json(self):
+        gila.set_config_name('json_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(True, gila.get("exists"))
+        self.assertEqual('json_config', gila.get("meta.filename"))
+        self.assertIsInstance(gila.get("contents"), list)
+
 
 if __name__ == '__main__':
     unittest.main()

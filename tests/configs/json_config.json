@@ -1,0 +1,19 @@
+{
+    "exists": true,
+    "filetype": "yaml",
+    "meta": {
+        "filename": "json_config"
+    },
+    "contents": [
+        {
+            "name": "exists",
+            "value_type": "boolean",
+            "value": true
+        },
+        {
+            "name": "exists",
+            "value_type": "boolean",
+            "value": true
+        }
+    ]
+}

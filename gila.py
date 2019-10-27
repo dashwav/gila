@@ -2,11 +2,15 @@
 This is the main file for the Gila library
 """
 from typing import List, Any
-from util.helpers import deep_search, yaml_to_dict, prop_to_dict
+from util.helpers import deep_search, yaml_to_dict, prop_to_dict, json_to_dict
 from os import path as os_path
 from os import environ as os_env
 
-_supported_exts = [".yaml", ".yml", ".properties"]
+_supported_exts = [
+    ".yaml", ".yml",
+    ".json",
+    ".properties", ".props", ".prop"
+    ]
 _key_delim = "."
 
 
@@ -204,9 +208,11 @@ class Gila():
             # TODO: add config not supported error
         if config_type in ['.yaml', '.yml']:
             config = yaml_to_dict(filename)
-        elif config_type == '.properties':
+        elif config_type in ['.properties', '.props', '.prop']:
             config = prop_to_dict(filename)
             print(config)
+        elif config_type in ['.json']:
+            config = json_to_dict(filename)
         else:
             config = {}
         self.__config = config

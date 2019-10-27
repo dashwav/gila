@@ -3,6 +3,7 @@ Misc functions to clean up main file
 """
 from typing import List
 from yaml import safe_load
+from json import load as json_load
 from configparser import ConfigParser
 
 
@@ -51,11 +52,19 @@ def yaml_to_dict(filepath: str):
 
 
 def prop_to_dict(filepath: str):
-    # try:
-    with open(filepath, 'r') as prop_config:
-        config = ConfigParser()
-        config.read_string(
-            '[config]\n' + prop_config.read())
-        return dict(config.items('config'))
-    # except Exception:
-    #     return None
+    try:
+        with open(filepath, 'r') as prop_config:
+            config = ConfigParser()
+            config.read_string(
+                '[config]\n' + prop_config.read())
+            return dict(config.items('config'))
+    except Exception:
+        return None
+
+
+def json_to_dict(filepath: str):
+    try:
+        with open(filepath, 'r') as json_config:
+            return json_load(json_config)
+    except Exception:
+        return None
