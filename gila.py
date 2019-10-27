@@ -32,6 +32,9 @@ class Gila():
         self.__overrides = {}
         self.__env = {}
 
+    def automatic_env(self):
+        self.__automatic_env_applied = True
+
     def set_config_type(self, filetype: str):
         if not filetype:
             return
@@ -236,7 +239,7 @@ class Gila():
                 return parent_key
         return None
 
-    def __bind_env(self, key: str, env_key: str = None):
+    def bind_env(self, key: str, env_key: str = None):
         if not key:
             return
             # TODO: add Error (Missing key to bind to)
@@ -326,6 +329,10 @@ def reset():
     _gila = Gila()
 
 
+def automatic_env():
+    return _gila.automatic_env()
+
+
 def set_config_type(filetype: str):
     return _gila.set_config_file(filetype)
 
@@ -356,6 +363,10 @@ def in_config(key: str):
 
 def set_default(key: str, value: Any):
     return _gila.set_default(key, value)
+
+
+def bind_env(key: str, env_key: str = None):
+    return _gila.bind_env(key, env_key)
 
 
 def set(key: str, value: Any):
