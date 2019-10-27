@@ -3,7 +3,7 @@ This is the main file for the Gila library
 """
 from typing import List, Any
 from util.helpers import deep_search, yaml_to_dict, prop_to_dict
-from util.helpers import json_to_dict, toml_to_dict
+from util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
 from os import path as os_path
 from os import environ as os_env
 
@@ -11,6 +11,7 @@ _supported_exts = [
     ".yaml", ".yml",
     ".toml",
     ".json",
+    ".hcl",
     ".properties", ".props", ".prop"
     ]
 _key_delim = "."
@@ -212,6 +213,8 @@ class Gila():
             config = toml_to_dict(filename)
         elif config_type in ['.json']:
             config = json_to_dict(filename)
+        elif config_type in ['.hcl']:
+            config = hcl_to_dict(filename)
         elif config_type in ['.properties', '.props', '.prop']:
             config = prop_to_dict(filename)
         else:

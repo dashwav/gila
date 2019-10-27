@@ -103,6 +103,14 @@ class TestGila(unittest.TestCase):
         self.assertEqual(gila.get("meta.filename"), 'toml_config')
         self.assertIsInstance(gila.get("contents"), list)
 
+    def test_read_in_hcl(self):
+        gila.set_config_name('hcl_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get("exists"), True)
+        self.assertEqual(gila.get("meta.filename"), 'hcl_config')
+        self.assertIsInstance(gila.get("contents"), list)
+
 
 if __name__ == '__main__':
     unittest.main()
