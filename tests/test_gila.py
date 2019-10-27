@@ -41,7 +41,7 @@ class TestGila(unittest.TestCase):
         var = "VALUES"
         os_env[key] = var
         gila.bind_env(key)
-        self.assertEqual(var, gila.get('gila_test'))
+        self.assertEqual(var, gila.get(key.lower()))
 
     def test_set_env_with_key(self):
         gila_key = "test"
@@ -69,7 +69,7 @@ class TestGila(unittest.TestCase):
         os_env[f'{prefix}_{key}'] = var
         gila.automatic_env()
         gila.set_env_prefix(prefix)
-        self.assertEqual(var, gila.get(key.lower()))
+        self.assertEqual(var, gila.get(key))
 
     def test_read_in_yaml(self):
         gila.set_config_name('yaml_config')
