@@ -1,9 +1,11 @@
 exists: True
 filetype: yaml
+meta:
+  filename: yaml_config
 contents:
   - name: exists
     value_type: boolean
-    value: true
+    value: True
   - name: filetype
     value_type: string
     value: yaml

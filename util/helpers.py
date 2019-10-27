@@ -3,6 +3,7 @@ Misc functions to clean up main file
 """
 from typing import List
 from yaml import safe_load
+from configparser import ConfigParser
 
 
 def deep_search(haystack: dict, keypath: List[str]):
@@ -47,3 +48,14 @@ def yaml_to_dict(filepath: str):
             return safe_load(yml_config)
     except Exception:
         return None
+
+
+def prop_to_dict(filepath: str):
+    # try:
+    with open(filepath, 'r') as prop_config:
+        config = ConfigParser()
+        config.read_string(
+            '[config]\n' + prop_config.read())
+        return dict(config.items('config'))
+    # except Exception:
+    #     return None

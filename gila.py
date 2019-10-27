@@ -2,11 +2,11 @@
 This is the main file for the Gila library
 """
 from typing import List, Any
-from util.helpers import deep_search, yaml_to_dict
+from util.helpers import deep_search, yaml_to_dict, prop_to_dict
 from os import path as os_path
 from os import environ as os_env
 
-_supported_exts = [".yaml", ".yml"]
+_supported_exts = [".yaml", ".yml", ".properties"]
 _key_delim = "."
 
 
@@ -194,10 +194,18 @@ class Gila():
         """
         filename = self.__get_config_file()
         config_type = self.__get_config_type()
+        print(f'filename: {filename}')
+        print(f'Config Type: {config_type}')
         if config_type not in self.__supported_exts:
             return
             # TODO: add config not supported error
-        config = yaml_to_dict(filename)
+        if config_type in ['.yaml', '.yml']:
+            config = yaml_to_dict(filename)
+        elif config_type == '.properties':
+            config = prop_to_dict(filename)
+            print(config)
+        else:
+            config = {}
         self.__config = config
 
     def __is_path_shadowed_in_deep_dict(self, path: List[str], to_check: dict):
