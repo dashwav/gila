@@ -6,6 +6,7 @@ from yaml import safe_load
 from json import load as json_load
 from toml import load as toml_load
 from hcl import load as hcl_load
+from dotenv import dotenv_values as env_load
 from configparser import ConfigParser
 
 
@@ -84,5 +85,13 @@ def hcl_to_dict(filepath: str):
     try:
         with open(filepath, 'r') as hcl_config:
             return hcl_load(hcl_config)
+    except Exception:
+        return None
+
+
+def env_to_dict(filepath: str):
+    try:
+        config = env_load(filepath)
+        return config
     except Exception:
         return None

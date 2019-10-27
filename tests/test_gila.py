@@ -111,6 +111,12 @@ class TestGila(unittest.TestCase):
         self.assertEqual(gila.get("meta.filename"), 'hcl_config')
         self.assertIsInstance(gila.get("contents"), list)
 
+    def test_read_in_env(self):
+        gila.set_config_name('env_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get("EXISTS"), 'True')
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -4,6 +4,7 @@ This is the main file for the Gila library
 from typing import List, Any
 from util.helpers import deep_search, yaml_to_dict, prop_to_dict
 from util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
+from util.helpers import env_to_dict
 from os import path as os_path
 from os import environ as os_env
 
@@ -12,7 +13,8 @@ _supported_exts = [
     ".toml",
     ".json",
     ".hcl",
-    ".properties", ".props", ".prop"
+    ".properties", ".props", ".prop",
+    ".env",
     ]
 _key_delim = "."
 
@@ -217,6 +219,8 @@ class Gila():
             config = hcl_to_dict(filename)
         elif config_type in ['.properties', '.props', '.prop']:
             config = prop_to_dict(filename)
+        elif config_type in ['.env']:
+            config = env_to_dict(filename)
         else:
             config = {}
         self.__config = config
