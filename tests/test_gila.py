@@ -41,7 +41,7 @@ class TestGila(unittest.TestCase):
         var = "VALUES"
         os_env[key] = var
         gila.bind_env(key)
-        self.assertEqual(var, gila.get(key.lower()))
+        self.assertEqual(gila.get(key.lower()), var)
 
     def test_set_env_with_key(self):
         gila_key = "test"
@@ -49,7 +49,7 @@ class TestGila(unittest.TestCase):
         var = "VALUES"
         os_env[key] = var
         gila.bind_env(gila_key, key)
-        self.assertEqual(var, gila.get(gila_key))
+        self.assertEqual(gila.get(gila_key), var)
         self.assertIsNone(gila.get(key))
 
     def test_set_env_with_prefix(self):
@@ -60,7 +60,7 @@ class TestGila(unittest.TestCase):
         gila.set_env_prefix(prefix)
         self.assertIsNone(gila.get(key.lower()))
         gila.bind_env(key)
-        self.assertEqual(var, gila.get(key.lower()))
+        self.assertEqual(gila.get(key.lower()), var)
 
     def test_auto_env(self):
         prefix = "GILA"
@@ -69,30 +69,38 @@ class TestGila(unittest.TestCase):
         os_env[f'{prefix}_{key}'] = var
         gila.automatic_env()
         gila.set_env_prefix(prefix)
-        self.assertEqual(var, gila.get(key))
+        self.assertEqual(gila.get(key), var)
 
     def test_read_in_yaml(self):
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
         gila.read_in_config()
-        self.assertEqual(True, gila.get("exists"))
-        self.assertEqual('yaml_config', gila.get("meta.filename"))
+        self.assertEqual(gila.get("exists"), True)
+        self.assertEqual(gila.get("meta.filename"), 'yaml_config')
         self.assertIsInstance(gila.get("contents"), list)
 
     def test_read_in_prop(self):
         gila.set_config_name('prop_config')
         gila.add_config_path('./tests/configs')
         gila.read_in_config()
-        self.assertEqual('True', gila.get("exists"))
-        self.assertEqual('string', gila.get("contents.filetype.value_type"))
+        self.assertEqual(gila.get("exists"), 'True')
+        self.assertEqual(gila.get("contents.filetype.value_type"), 'string')
         self.assertIsNone(gila.get("contents"))
 
     def test_read_in_json(self):
         gila.set_config_name('json_config')
         gila.add_config_path('./tests/configs')
         gila.read_in_config()
-        self.assertEqual(True, gila.get("exists"))
-        self.assertEqual('json_config', gila.get("meta.filename"))
+        self.assertEqual(gila.get("exists"), True)
+        self.assertEqual(gila.get("meta.filename"), 'json_config')
+        self.assertIsInstance(gila.get("contents"), list)
+
+    def test_read_in_toml(self):
+        gila.set_config_name('toml_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get("exists"), True)
+        self.assertEqual(gila.get("meta.filename"), 'toml_config')
         self.assertIsInstance(gila.get("contents"), list)
 
 

@@ -1,0 +1,16 @@
+exists = true
+filetype = "toml"
+
+[meta]
+filename = "toml_config"
+
+# Arrays in toml are interesting
+[[contents]]
+name = "exists"
+value_type = "boolean"
+value = true
+
+[[contents]]
+name = "filetype"
+value_type = "string"
+value = "toml"

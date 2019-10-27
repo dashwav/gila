@@ -4,6 +4,7 @@ Misc functions to clean up main file
 from typing import List
 from yaml import safe_load
 from json import load as json_load
+from toml import load as toml_load
 from configparser import ConfigParser
 
 
@@ -66,5 +67,13 @@ def json_to_dict(filepath: str):
     try:
         with open(filepath, 'r') as json_config:
             return json_load(json_config)
+    except Exception:
+        return None
+
+
+def toml_to_dict(filepath: str):
+    try:
+        with open(filepath, 'r') as toml_config:
+            return toml_load(toml_config)
     except Exception:
         return None

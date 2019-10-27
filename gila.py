@@ -2,12 +2,14 @@
 This is the main file for the Gila library
 """
 from typing import List, Any
-from util.helpers import deep_search, yaml_to_dict, prop_to_dict, json_to_dict
+from util.helpers import deep_search, yaml_to_dict, prop_to_dict
+from util.helpers import json_to_dict, toml_to_dict
 from os import path as os_path
 from os import environ as os_env
 
 _supported_exts = [
     ".yaml", ".yml",
+    ".toml",
     ".json",
     ".properties", ".props", ".prop"
     ]
@@ -201,18 +203,17 @@ class Gila():
         """
         filename = self.__get_config_file()
         config_type = self.__get_config_type()
-        print(f'filename: {filename}')
-        print(f'Config Type: {config_type}')
         if config_type not in self.__supported_exts:
             return
             # TODO: add config not supported error
         if config_type in ['.yaml', '.yml']:
             config = yaml_to_dict(filename)
-        elif config_type in ['.properties', '.props', '.prop']:
-            config = prop_to_dict(filename)
-            print(config)
+        elif config_type in ['.toml']:
+            config = toml_to_dict(filename)
         elif config_type in ['.json']:
             config = json_to_dict(filename)
+        elif config_type in ['.properties', '.props', '.prop']:
+            config = prop_to_dict(filename)
         else:
             config = {}
         self.__config = config
