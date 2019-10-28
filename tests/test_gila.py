@@ -2,6 +2,7 @@ import unittest
 
 import gila
 from os import environ as os_env
+from singleton import singleton_helper
 
 
 class TestBaseGila(unittest.TestCase):
@@ -57,6 +58,14 @@ class TestBaseGila(unittest.TestCase):
         self.assertIsNone(gila.get(key.lower()))
         gila.bind_env(key)
         self.assertEqual(gila.get(key.lower()), var)
+
+    def test_singleton(self):
+        key = "test"
+        value = "value"
+        gila.set(key, value)
+        self.assertEqual(gila.get(key), value)
+        singleton_helper()
+        self.assertEqual(gila.get(key), 'new_value')
 
 
 class TestOverrides(unittest.TestCase):
