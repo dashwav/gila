@@ -148,18 +148,24 @@ class Gila():
             return True
         return False
 
-    def __register_alias(self, alias: str, key: str):
+    def register_alias(self, alias: str, key: str):
         if alias == key or alias == self.__real_key(key):
             raise CircularReference("No circular references")
-        found_config_val = self.__config[alias]
+        found_config_val = None
+        if alias in self.__config:
+            found_config_val = self.__config[alias]
         if found_config_val:
             del self.__config[alias]
             self.__config[key] = found_config_val
-        found_defaults_val = self.__defualts[alias]
+        found_defaults_val = None
+        if alias in self.__defaults:
+            found_defaults_val = self.__defualts[alias]
         if found_defaults_val:
             del self.__defualts[alias]
             self.__defualts[key] = found_defaults_val
-        found_override_val = self.__overrides[alias]
+        found_override_val = None
+        if alias in self.__overrides:
+            found_override_val = self.__overrides[alias]
         if found_override_val:
             del self.__overrides[alias]
             self.__overrides[key] = found_override_val
@@ -378,6 +384,10 @@ def set_default(key: str, value: Any):
 
 def bind_env(key: str, env_key: str = None):
     return _gila.bind_env(key, env_key)
+
+
+def register_alias(alias: str, key: str):
+    return _gila.register_alias(alias, key)
 
 
 def set(key: str, value: Any):
