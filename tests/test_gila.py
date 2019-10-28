@@ -23,6 +23,13 @@ class TestBaseGila(unittest.TestCase):
         gila.set(key, value)
         self.assertEqual(gila.get(key), value)
 
+    def test_setting_values_falsy(self):
+        key = "key"
+        value = False
+        gila.set(key, value)
+        self.assertEqual(gila.get(key), value)
+        self.assertIsNone(gila.get('notset'))
+
     def test_setting_values_with_alias(self):
         key = "key"
         value = "value"
