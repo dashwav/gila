@@ -99,7 +99,6 @@ class Gila():
         # End case
         if len(path) == 0:
             return to_search
-
         if path[0] in to_search:
             # Fast return
             if len(path) == 1:
@@ -322,7 +321,7 @@ class Gila():
             return None
 
         value = self.__search_dict(self.__defaults, path)
-        if value:
+        if value or value in [False]:
             return value
         return None
 
