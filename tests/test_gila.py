@@ -4,7 +4,7 @@ import gila
 from os import environ as os_env
 
 
-class TestGila(unittest.TestCase):
+class TestBaseGila(unittest.TestCase):
 
     def setUp(self):
         gila.reset()
@@ -22,19 +22,15 @@ class TestGila(unittest.TestCase):
         gila.set(key, value)
         self.assertEqual(gila.get(key), value)
 
+    def test_setting_values_with_alias(self):
         key = "key"
         value = "value"
-        gila.set_default(key, value)
+        gila.set(key, value)
         self.assertEqual(gila.get(key), value)
 
-    def test_override_precedence_default(self):
-        key = "key"
-        default_value = "test"
-        override_value = "value"
-        gila.set_default(key, default_value)
-        self.assertEqual(gila.get(key), default_value)
-        gila.set(key, override_value)
-        self.assertEqual(gila.get(key), override_value)
+        alias = "alias_key"
+        gila.register_alias(alias, key)
+        self.assertEqual(gila.get(alias), value)
 
     def test_set_env(self):
         key = "GILA_TEST"
@@ -61,6 +57,48 @@ class TestGila(unittest.TestCase):
         self.assertIsNone(gila.get(key.lower()))
         gila.bind_env(key)
         self.assertEqual(gila.get(key.lower()), var)
+
+
+class TestOverrides(unittest.TestCase):
+
+    def setUp(self):
+        gila.reset()
+
+    def test_override_precedence_env(self):
+        key = "gila_key"
+        env_value = "test"
+        override_value = "value"
+        os_env[key.upper()] = env_value
+        gila.bind_env(key)
+        self.assertEqual(gila.get(key), env_value)
+        gila.set(key, override_value)
+        self.assertEqual(gila.get(key), override_value)
+
+    def test_env_precendence_config(self):
+        key = "filetype"
+        env_value = "test"
+        gila.set_config_name('yaml_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get("filetype"), "yaml")
+        os_env[key.upper()] = env_value
+        gila.bind_env(key)
+        self.assertEqual(gila.get(key), env_value)
+
+    def test_config_precendence_default(self):
+        key = "filetype"
+        default_value = "test"
+        gila.set_default(key, default_value)
+        self.assertEqual(gila.get(key), default_value)
+        gila.set_config_name('yaml_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get("filetype"), "yaml")
+
+
+class TestReadConfigs(unittest.TestCase):
+    def setUp(self):
+        gila.reset()
 
     def test_auto_env(self):
         prefix = "GILA"
