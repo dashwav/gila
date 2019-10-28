@@ -2,6 +2,8 @@
 This is the main file for the Gila library
 """
 from typing import List, Any
+from util.errors import ConfigNotSupported, ConfigFileNotFound
+from util.errors import CircularReference
 from util.helpers import deep_search, yaml_to_dict, prop_to_dict
 from util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
 from util.helpers import env_to_dict
@@ -74,7 +76,6 @@ class Gila():
     def add_config_path(self, filepath: str):
         if not filepath:
             return
-        # TODO: Check if absPath is needed here
         self.__config_paths.append(filepath)
 
     def set_env_prefix(self, prefix: str):
@@ -138,8 +139,8 @@ class Gila():
             if found_config:
                 return found_config
         if not found_config:
-            # TODO: Add config not found exception
-            return
+            raise ConfigFileNotFound(
+                f"Couldn't find config on paths: {self.__config_paths}")
 
     def is_set(self, key: str):
         found_key = self.__find(key.lower())
@@ -149,8 +150,7 @@ class Gila():
 
     def __register_alias(self, alias: str, key: str):
         if alias == key or alias == self.__real_key(key):
-            return
-            # TODO: Error, circular reference
+            raise CircularReference("No circular references")
         found_config_val = self.__config[alias]
         if found_config_val:
             del self.__config[alias]
@@ -207,8 +207,8 @@ class Gila():
         filename = self.__get_config_file()
         config_type = self.__get_config_type()
         if config_type not in self.__supported_exts:
-            return
-            # TODO: add config not supported error
+            raise ConfigNotSupported(
+                f"The extensions Gila supports are {self.__supported_exts}")
         if config_type in ['.yaml', '.yml']:
             config = yaml_to_dict(filename)
         elif config_type in ['.toml']:
@@ -254,9 +254,6 @@ class Gila():
         return None
 
     def bind_env(self, key: str, env_key: str = None):
-        if not key:
-            return
-            # TODO: add Error (Missing key to bind to)
         key = key.lower()
         if not env_key:
             env_key = self.__merge_with_env_prefix(key)
