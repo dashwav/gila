@@ -23,7 +23,7 @@ setup(
     url='https://gitlab.com/dashwav/gila',
     author='dashwav',
     license='MPL2.0',
-    packages=find_packages(exclude=['tests', 'docs']),
+    packages=find_packages(exclude=['tests', 'docs', 'examples']),
     include_package_data=True,
     package_data=package_data,
     install_requires=requirements,
