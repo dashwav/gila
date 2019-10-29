@@ -1,6 +1,6 @@
 import unittest
 
-from util.helpers import deep_search
+from gila.util.helpers import deep_search
 
 
 class TestDeepSearch(unittest.TestCase):
