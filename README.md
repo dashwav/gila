@@ -1,6 +1,6 @@
 # Gila
 
-Gila is a python3 configuration library based very heavily on the [viper](https://github.com/spf13/viper) config library for Go. It is designed to facilitate making [12 factor](https://12factor.net/) app as easily as possible using python3
+Gila is a python3 configuration library based very heavily on the [viper](https://github.com/spf13/viper) config library for Go. It is designed to facilitate making [12 factor](https://12factor.net/) apps as easy as possible using python3.
 
 # Motivation
 After having used the Viper config library in Go, I became very used to the ease of use and flexibility that it offered. After looking for a library to use in my python projects I was unable to find one that combined all of the very useful features that Viper supports.
@@ -29,7 +29,7 @@ from os import environ
 gila.set_default('host', 'localhost:8080')
 gila.set_default('allow_insecure', False)
 
-# This will tell Gila to automatically load in ENV vas that start with GILA
+# This will tell Gila to automatically load in ENV vars that start with GILA
 gila.set_env_prefix('GILA')
 gila.automatic_env()
 
