@@ -18,6 +18,11 @@ cache:
     - .cache/pip
     - venv/
 
+stages:
+  - test
+  - build
+  - deploy
+
 before_script:
   - python -V  # Print out python version for debugging
   - pip install virtualenv
@@ -25,12 +30,14 @@ before_script:
   - source venv/bin/activate
 
 test:
+  stage: test
   script:
     - python setup.py test
     - pip install tox flake8  # you can also use tox
     - tox -e py36,flake8
 
-run:
+build:
+  stage: build
   script:
     - python setup.py bdist_wheel
     # an alternative approach is to install and run:
@@ -42,6 +49,7 @@ run:
       - dist/*.whl
 
 deploy:
+  stage: deploy
   only:
     - tags
   script:
