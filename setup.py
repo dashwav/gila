@@ -20,6 +20,7 @@ setup(
     description=('A simple python3 config library based on'
                  'golang\'s spf13/viper'),
     long_description=readme,
+    long_description_content_type="text/markdown",
     url='https://gitlab.com/dashwav/gila',
     author='dashwav',
     license='MPL2.0',
@@ -30,7 +31,7 @@ setup(
     classifiers=[
         'Development Status :: 4 - Beta',
         'License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)',
-        'Programming Language :: Python :: 3 :: Only'
+        'Programming Language :: Python :: 3 :: Only',
         'Intended Audience :: Developers',
         'Natural Language :: English'
     ]
