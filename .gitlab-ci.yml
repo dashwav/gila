@@ -38,6 +38,8 @@ test:
 
 build:
   stage: build
+  only:
+    - tags
   script:
     - python setup.py bdist_wheel
     # an alternative approach is to install and run:
