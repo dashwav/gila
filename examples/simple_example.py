@@ -15,9 +15,6 @@ environ['GILA_HOST'] = 'localhost:9999'
 
 host = gila.get('host')
 allow_insecure = gila.get('allow_insecure')
-print(allow_insecure)
-
-gila.debug()
 
 """
 Output:
