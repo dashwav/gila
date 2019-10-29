@@ -2,11 +2,11 @@
 This is the main file for the Gila library
 """
 from typing import List, Any
-from util.errors import ConfigNotSupported, ConfigFileNotFound
-from util.errors import CircularReference
-from util.helpers import deep_search, yaml_to_dict, prop_to_dict
-from util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
-from util.helpers import env_to_dict
+from .util.errors import ConfigNotSupported, ConfigFileNotFound
+from .util.errors import CircularReference
+from .util.helpers import deep_search, yaml_to_dict, prop_to_dict
+from .util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
+from .util.helpers import env_to_dict
 from os import path as os_path
 from os import environ as os_env
 
@@ -19,6 +19,26 @@ _supported_exts = [
     ".env",
     ]
 _key_delim = "."
+
+__all__ = [
+    "Gila",
+    "reset",
+    "automatic_env",
+    "set_config_type",
+    "set_config_name",
+    "set_config_file",
+    "add_config_path",
+    "set_env_prefix",
+    "is_set",
+    "in_config",
+    "set_default",
+    "bind_env",
+    "register_alias",
+    "set",
+    "read_in_config",
+    "get",
+    "debug"
+]
 
 
 class Gila():
