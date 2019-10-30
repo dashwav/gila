@@ -20,6 +20,7 @@ cache:
 
 stages:
   - test
+  - verify
   - build
   - deploy
 
@@ -44,6 +45,13 @@ test-py38:
   stage: test
   script:
     - tox -e py38,flake8
+
+verify:
+  only:
+    - tags
+  stage: verify
+  script:
+    - verify.sh
 
 build:
   stage: build
