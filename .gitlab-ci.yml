@@ -24,30 +24,28 @@ stages:
   - build
   - deploy
 
-.tox-tests:
+test-py36:
+  image: python:3.6-slim
+  stage: test
   script:
     - python -V  # Print out python version for debugging
     - pip install tox flake8 
-
-test-py36:
-  image: python:3.6-slim
-  extends: .tox-tests
-  stage: test
-  script:
     - tox -e py36,flake8
 
 test-py37:
   image: python:3.7-slim
-  extends: .tox-tests
   stage: test
   script:
+    - python -V  # Print out python version for debugging
+    - pip install tox flake8 
     - tox -e py37,flake8
 
 test-py38:
   image: python:3.8-slim
-  extends: .tox-tests
   stage: test
   script:
+    - python -V  # Print out python version for debugging
+    - pip install tox flake8 
     - tox -e py38,flake8
 
 verify:
