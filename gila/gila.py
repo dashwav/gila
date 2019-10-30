@@ -34,7 +34,7 @@ __all__ = [
     "set_default",
     "bind_env",
     "register_alias",
-    "set",
+    "override",
     "read_in_config",
     "get",
     "debug"
@@ -213,7 +213,7 @@ class Gila():
 
         deepest_dict[last_key] = value
 
-    def set(self, key: str, value: Any):
+    def override(self, key: str, value: Any):
         """
         Sets the override value for key to value
         """
@@ -409,8 +409,8 @@ def register_alias(alias: str, key: str):
     return _gila.register_alias(alias, key)
 
 
-def set(key: str, value: Any):
-    return _gila.set(key, value)
+def override(key: str, value: Any):
+    return _gila.override(key, value)
 
 
 def read_in_config():

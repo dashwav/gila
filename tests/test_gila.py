@@ -13,27 +13,27 @@ class TestBaseGila(unittest.TestCase):
     def test_reset(self):
         key = "key"
         value = "value"
-        gila.set(key, value)
+        gila.override(key, value)
         gila.reset()
         self.assertIsNone(gila.get(key))
 
     def test_setting_values(self):
         key = "key"
         value = "value"
-        gila.set(key, value)
+        gila.override(key, value)
         self.assertEqual(gila.get(key), value)
 
     def test_setting_values_falsy(self):
         key = "key"
         value = False
-        gila.set(key, value)
+        gila.override(key, value)
         self.assertEqual(gila.get(key), value)
         self.assertIsNone(gila.get('notset'))
 
     def test_setting_values_with_alias(self):
         key = "key"
         value = "value"
-        gila.set(key, value)
+        gila.override(key, value)
         self.assertEqual(gila.get(key), value)
 
         alias = "alias_key"
@@ -69,7 +69,7 @@ class TestBaseGila(unittest.TestCase):
     def test_singleton(self):
         key = "test"
         value = "value"
-        gila.set(key, value)
+        gila.override(key, value)
         self.assertEqual(gila.get(key), value)
         singleton_helper()
         self.assertEqual(gila.get(key), 'new_value')
@@ -87,7 +87,7 @@ class TestOverrides(unittest.TestCase):
         os_env[key.upper()] = env_value
         gila.bind_env(key)
         self.assertEqual(gila.get(key), env_value)
-        gila.set(key, override_value)
+        gila.override(key, override_value)
         self.assertEqual(gila.get(key), override_value)
 
     def test_env_precendence_config(self):
