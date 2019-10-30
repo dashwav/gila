@@ -25,16 +25,25 @@ stages:
 
 before_script:
   - python -V  # Print out python version for debugging
-  - pip install virtualenv
-  - virtualenv venv
-  - source venv/bin/activate
+  - pip install tox flake8 
 
-test:
+test-py36:
+  image: python:3.6-slim
   stage: test
   script:
-    - python setup.py test
-    - pip install tox flake8  # you can also use tox
     - tox -e py36,flake8
+
+test-py37:
+  image: python:3.7-slim
+  stage: test
+  script:
+    - tox -e py37,flake8
+
+test-py38:
+  image: python:3.8-slim
+  stage: test
+  script:
+    - tox -e py38,flake8
 
 build:
   stage: build

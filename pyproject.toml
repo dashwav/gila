@@ -4,7 +4,17 @@ requires = ["setuptools", "wheel"]
 [tool.tox]
 legacy_tox_ini = """
 [tox]
-envlist = py36,flake8
+envlist = py36,py37,py38,flake8
 [testenv]
 commands = python -m unittest discover -s tests
+[testenv:flake8]
+basepython = python3
+skip_install = true
+deps =
+    flake8
+    flake8-bugbear
+    flake8-colors
+    pep8-naming
+commands =
+    flake8 gila/ tests/ examples/
 """
