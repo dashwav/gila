@@ -89,7 +89,7 @@ class Gila():
     def __get_config_type(self):
         if not self.__config_type:
             filepath = self.__get_config_file()
-            filename, file_extension = os_path.splitext(filepath)
+            _, file_extension = os_path.splitext(filepath)
             return file_extension
         return self.__config_type
 
@@ -353,9 +353,8 @@ class Gila():
         print(f'Defaults: {self.__defaults}\n')
 
 
-"""
-Singleton functionality
-"""
+# Singleton functionality
+
 
 _gila = Gila()
 
