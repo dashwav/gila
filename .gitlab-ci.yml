@@ -43,7 +43,7 @@ test-py38:
   image: python:3.8-slim
   stage: test
   script:
-    - tox -e py37,flake8
+    - tox -e py38,flake8
 
 build:
   stage: build
