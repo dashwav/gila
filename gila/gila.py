@@ -34,6 +34,7 @@ __all__ = [
     "set_default",
     "unbind_env",
     "bind_env",
+    "override_with_env",
     "register_alias",
     "deregister_alias",
     "override",
@@ -78,9 +79,8 @@ class Gila():
             (aliases[str(key)], dict_1.get(aliases[str(key)]) or dict_2.get(aliases[str(key)]))
             for key in set(dict_2) | set(dict_1))
 
-
     def automatic_env(self):
-        self.__automatic_env_applied = not self.__automatic_env_applied 
+        self.__automatic_env_applied = not self.__automatic_env_applied
 
     def set_config_type(self, filetype: str):
         if not filetype:
@@ -121,16 +121,11 @@ class Gila():
 
     def all_config(self):
         """Get all config values."""
-        _d1 = None
-        _d2 = None
+        _d1 = self.__overrides
         _t = None
-        _d = [self.__overrides, self.__env, self.__config, self.__defaults]
-        for i, k in enumerate(_d):
-            if i == 0:
-                continue
-            _d2 = _d[i]
+        _d = [self.__env, self.__config, self.__defaults]
+        for _d2 in _d:
             if _t is None:
-                _d1 = _d[i - 1]
                 _t = self.__merge(_d1, _d2, self.__aliases)
             else:
                 _t = self.__merge(_t, _d2, self.__aliases)
@@ -306,6 +301,15 @@ class Gila():
             config = {}
         self.__config = config
 
+    def override_with_env(self, prefix: str):
+        """
+        Finds all env vars with given prefix and sets them
+        as overrides with a lowercase key
+        """
+        for key, value in os_env.items():
+            if key.startswith(prefix):
+                self.override(key[len(prefix)+1:].lower(), value)
+
     def __is_path_shadowed_in_deep_dict(self, path: List[str], to_check: dict):
         parent_val = None
         for index, _ in enumerate(path):
@@ -424,6 +428,7 @@ def reset():
     global _gila
     _gila = Gila()
 
+
 def all_config():
     return _gila.all_config()
 
@@ -467,20 +472,30 @@ def set_default(key: str, value: Any):
 def bind_env(key: str, env_key: str = None):
     return _gila.bind_env(key, env_key)
 
+
 def unbind_env(key: str):
     return _gila.unbind_env(key)
+
+
+def override_with_env(prefix: str):
+    return _gila.override_with_env(prefix)
+
 
 def register_alias(alias: str, key: str):
     return _gila.register_alias(alias, key)
 
+
 def deregister_alias(alias: str):
     return _gila.deregister_alias(alias)
+
 
 def override(key: str, value: Any):
     return _gila.override(key, value)
 
+
 def remove_override(key: str):
     return _gila.remove_override(key)
+
 
 def read_in_config():
     return _gila.read_in_config()
