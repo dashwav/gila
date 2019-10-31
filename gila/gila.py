@@ -120,16 +120,11 @@ class Gila():
 
     def all_config(self):
         """Get all config values."""
-        _d1 = None
-        _d2 = None
+        _d1 = self.__overrides
         _t = None
-        _d = [self.__overrides, self.__env, self.__config, self.__defaults]
-        for i in range(len(_d)):
-            if i == 0:
-                continue
-            _d2 = _d[i]
+        _d = [self.__env, self.__config, self.__defaults]
+        for _d2 in _d:
             if _t is None:
-                _d1 = _d[i - 1]
                 _t = self.__merge(_d1, _d2, self.__aliases)
             else:
                 _t = self.__merge(_t, _d2, self.__aliases)
