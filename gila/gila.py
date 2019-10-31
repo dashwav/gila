@@ -75,9 +75,11 @@ class Gila():
         `dict_1` takes priority over `dict_2`.
         """
         return dict((str(key),
-            dict_1.get(key) or dict_2.get(key))if key not in aliases else
-            (aliases[str(key)], dict_1.get(aliases[str(key)]) or dict_2.get(aliases[str(key)]))
-            for key in set(dict_2) | set(dict_1))
+                    dict_1.get(key) or dict_2.get(key))
+                    if key not in aliases else
+                    (aliases[str(key)], dict_1.get(aliases[str(key)]) or
+                    dict_2.get(aliases[str(key)]))
+                    for key in set(dict_2) | set(dict_1))
 
     def automatic_env(self):
         self.__automatic_env_applied = not self.__automatic_env_applied
