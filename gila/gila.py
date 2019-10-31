@@ -35,7 +35,9 @@ __all__ = [
     "unbind_env",
     "bind_env",
     "register_alias",
+    "deregister_alias",
     "override",
+    "remove_override",
     "read_in_config",
     "get",
     "debug",
@@ -220,6 +222,23 @@ class Gila():
             self.__overrides[key] = found_override_val
         self.__aliases[alias] = key
 
+    def deregister_alias(self, alias: str):
+        if alias in self.__aliases:
+            key = self.__aliases[alias]
+            if key in self.__overrides:
+                self.__overrides[alias] = self.__overrides[key]
+                del self.__overrides[key]
+            if key in self.__config:
+                self.__config[alias] = self.__config[key]
+                del self.__config[key]
+            if key in self.__defaults:
+                self.__defaults[alias] = self.__defaults[key]
+                del self.__defaults[key]
+            if key in self.__env:
+                self.__env[alias] = self.__env[key]
+                del self.__env[key]
+            del self.__aliases[alias]
+
     def __real_key(self, key: str):
         found_key = None
         if key in self.__aliases:
@@ -254,6 +273,11 @@ class Gila():
         deepest_dict = deep_search(self.__overrides, path[0:-1])
 
         deepest_dict[last_key] = value
+
+    def remove_override(self, key: str):
+        key = self.__real_key(key)
+        if key in self.__overrides:
+            del self.__overrides[key]
 
     def read_in_config(self):
         """
@@ -315,7 +339,7 @@ class Gila():
         self.__env[key] = env_key
 
     def unbind_env(self, key: str):
-        key = key.lower()
+        key = self.__real_key(key)
         if key in self.__env:
             del self.__env[key]
 
@@ -447,10 +471,14 @@ def unbind_env(key: str):
 def register_alias(alias: str, key: str):
     return _gila.register_alias(alias, key)
 
+def deregister_alias(alias: str):
+    return _gila.deregister_alias(alias)
 
 def override(key: str, value: Any):
     return _gila.override(key, value)
 
+def remove_override(key: str):
+    return _gila.remove_override(key)
 
 def read_in_config():
     return _gila.read_in_config()
