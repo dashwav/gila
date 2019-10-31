@@ -125,6 +125,21 @@ class TestReadConfigs(unittest.TestCase):
         gila.set_env_prefix(prefix)
         self.assertEqual(gila.get(key), var)
 
+    def test_override_with_env(self):
+        prefix = "GILA"
+        key1 = "TEST1"
+        var1 = "Values2"
+        key2 = "TEST2"
+        var2 = "VALUES"
+        os_env[f'{prefix}_{key1}'] = var1
+        os_env[f'{prefix}_{key2}'] = var2
+        gila.override_with_env(prefix)
+        self.assertEqual(gila.get(key1.lower()), var1)
+        self.assertEqual(gila.get(key2.lower()), var2)
+        os_env[f'{prefix}_{key1}'] = var1 + "test"
+        self.assertEqual(gila.get(key1.lower()), var1)
+        self.assertIsNone(gila.get(key2))
+
     def test_read_in_yaml(self):
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')

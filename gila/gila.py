@@ -34,6 +34,7 @@ __all__ = [
     "set_default",
     "unbind_env",
     "bind_env",
+    "override_with_env",
     "register_alias",
     "deregister_alias",
     "override",
@@ -300,6 +301,15 @@ class Gila():
             config = {}
         self.__config = config
 
+    def override_with_env(self, prefix: str):
+        """
+        Finds all env vars with given prefix and sets them
+        as overrides with a lowercase key
+        """
+        for key, value in os_env.items():
+            if key.startswith(prefix):
+                self.override(key[len(prefix)+1:].lower(), value)
+
     def __is_path_shadowed_in_deep_dict(self, path: List[str], to_check: dict):
         parent_val = None
         for index, _ in enumerate(path):
@@ -465,6 +475,10 @@ def bind_env(key: str, env_key: str = None):
 
 def unbind_env(key: str):
     return _gila.unbind_env(key)
+
+
+def override_with_env(prefix: str):
+    return _gila.override_with_env(prefix)
 
 
 def register_alias(alias: str, key: str):
