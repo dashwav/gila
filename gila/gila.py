@@ -78,9 +78,8 @@ class Gila():
             (aliases[str(key)], dict_1.get(aliases[str(key)]) or dict_2.get(aliases[str(key)]))
             for key in set(dict_2) | set(dict_1))
 
-
     def automatic_env(self):
-        self.__automatic_env_applied = not self.__automatic_env_applied 
+        self.__automatic_env_applied = not self.__automatic_env_applied
 
     def set_config_type(self, filetype: str):
         if not filetype:
@@ -125,7 +124,7 @@ class Gila():
         _d2 = None
         _t = None
         _d = [self.__overrides, self.__env, self.__config, self.__defaults]
-        for i, k in enumerate(_d):
+        for i in range(len(_d)):
             if i == 0:
                 continue
             _d2 = _d[i]
@@ -424,6 +423,7 @@ def reset():
     global _gila
     _gila = Gila()
 
+
 def all_config():
     return _gila.all_config()
 
@@ -467,20 +467,26 @@ def set_default(key: str, value: Any):
 def bind_env(key: str, env_key: str = None):
     return _gila.bind_env(key, env_key)
 
+
 def unbind_env(key: str):
     return _gila.unbind_env(key)
+
 
 def register_alias(alias: str, key: str):
     return _gila.register_alias(alias, key)
 
+
 def deregister_alias(alias: str):
     return _gila.deregister_alias(alias)
+
 
 def override(key: str, value: Any):
     return _gila.override(key, value)
 
+
 def remove_override(key: str):
     return _gila.remove_override(key)
+
 
 def read_in_config():
     return _gila.read_in_config()
