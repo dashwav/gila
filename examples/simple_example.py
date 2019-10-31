@@ -1,5 +1,6 @@
 import gila
 from os import environ
+from IPython import embed
 
 # Setting default values for keys
 gila.set_default('host', 'localhost:8080')
@@ -23,3 +24,6 @@ Insecure allowed: false
 """
 print(f'Host: {host}')
 print(f'Insecure allowed: {allow_insecure}')
+
+print('Nick Testing')
+embed()
