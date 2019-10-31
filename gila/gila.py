@@ -68,13 +68,15 @@ class Gila():
         self.__env = {}
 
     @staticmethod
-    def __merge(dict_1, dict_2):
+    def __merge(dict_1, dict_2, aliases):
         """Merge two dictionaries.
         Values that evaluate to true take priority over falsy values.
         `dict_1` takes priority over `dict_2`.
         """
         return dict((str(key),
-            dict_1.get(key) or dict_2.get(key)) for key in set(dict_2) | set(dict_1))
+            dict_1.get(key) or dict_2.get(key))if key not in aliases else
+            (aliases[str(key)], dict_1.get(aliases[str(key)]) or dict_2.get(aliases[str(key)]))
+            for key in set(dict_2) | set(dict_1))
 
 
     def automatic_env(self):
@@ -122,16 +124,16 @@ class Gila():
         _d1 = None
         _d2 = None
         _t = None
-        _d = [self.__aliases, self.__overrides, self.__env, self.__config, self.__defaults]
+        _d = [self.__overrides, self.__env, self.__config, self.__defaults]
         for i, k in enumerate(_d):
             if i == 0:
                 continue
             _d2 = _d[i]
             if _t is None:
                 _d1 = _d[i - 1]
-                _t = self.__merge(_d1, _d2)
+                _t = self.__merge(_d1, _d2, self.__aliases)
             else:
-                _t = self.__merge(_t, _d2)
+                _t = self.__merge(_t, _d2, self.__aliases)
         _t = dict([(key, self.__find(key)) for key in _t])
         return _t
 
