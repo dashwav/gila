@@ -32,12 +32,14 @@ __all__ = [
     "is_set",
     "in_config",
     "set_default",
+    "unbind_env",
     "bind_env",
     "register_alias",
     "override",
     "read_in_config",
     "get",
-    "debug"
+    "debug",
+    "all_config"
 ]
 
 
@@ -63,8 +65,18 @@ class Gila():
         self.__overrides = {}
         self.__env = {}
 
+    @staticmethod
+    def __merge(dict_1, dict_2):
+        """Merge two dictionaries.
+        Values that evaluate to true take priority over falsy values.
+        `dict_1` takes priority over `dict_2`.
+        """
+        return dict((str(key),
+            dict_1.get(key) or dict_2.get(key)) for key in set(dict_2) | set(dict_1))
+
+
     def automatic_env(self):
-        self.__automatic_env_applied = True
+        self.__automatic_env_applied = not self.__automatic_env_applied 
 
     def set_config_type(self, filetype: str):
         if not filetype:
@@ -102,6 +114,24 @@ class Gila():
         if not prefix:
             return
         self.__env_prefix = prefix
+
+    def all_config(self):
+        """Get all config values."""
+        _d1 = None
+        _d2 = None
+        _t = None
+        _d = [self.__aliases, self.__overrides, self.__env, self.__config, self.__defaults]
+        for i, k in enumerate(_d):
+            if i == 0:
+                continue
+            _d2 = _d[i]
+            if _t is None:
+                _d1 = _d[i - 1]
+                _t = self.__merge(_d1, _d2)
+            else:
+                _t = self.__merge(_t, _d2)
+        _t = dict([(key, self.__find(key)) for key in _t])
+        return _t
 
     def __merge_with_env_prefix(self, merge: str):
         if not self.__env_prefix:
@@ -178,10 +208,10 @@ class Gila():
             self.__config[key] = found_config_val
         found_defaults_val = None
         if alias in self.__defaults:
-            found_defaults_val = self.__defualts[alias]
+            found_defaults_val = self.__defaults[alias]
         if found_defaults_val:
-            del self.__defualts[alias]
-            self.__defualts[key] = found_defaults_val
+            del self.__defaults[alias]
+            self.__defaults[key] = found_defaults_val
         found_override_val = None
         if alias in self.__overrides:
             found_override_val = self.__overrides[alias]
@@ -284,6 +314,11 @@ class Gila():
             env_key = self.__merge_with_env_prefix(key)
         self.__env[key] = env_key
 
+    def unbind_env(self, key: str):
+        key = key.lower()
+        if key in self.__env:
+            del self.__env[key]
+
     def get(self, key: str):
         return self.__find(key)
 
@@ -363,6 +398,9 @@ def reset():
     global _gila
     _gila = Gila()
 
+def all_config():
+    return _gila.all_config()
+
 
 def automatic_env():
     return _gila.automatic_env()
@@ -403,6 +441,8 @@ def set_default(key: str, value: Any):
 def bind_env(key: str, env_key: str = None):
     return _gila.bind_env(key, env_key)
 
+def unbind_env(key: str):
+    return _gila.unbind_env(key)
 
 def register_alias(alias: str, key: str):
     return _gila.register_alias(alias, key)
