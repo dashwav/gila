@@ -68,18 +68,18 @@ class Gila():
         self.__overrides = {}
         self.__env = {}
 
-    @staticmethod
-    def __merge(dict_1, dict_2, aliases):
+    def __merge(self, dict_1: dict, dict_2: dict):
         """Merge two dictionaries.
-        Values that evaluate to true take priority over falsy values.
-        `dict_1` takes priority over `dict_2`.
+
+        `dict_1` > `dict_2`
+        Works by creating set of all keys between two dictionaries.
+        Then iterates through and gathers values from first dict_1
+        if present, else falls back to dict_2.
         """
-        return dict((str(key),
-                    dict_1.get(key) or dict_2.get(key))
-                    if key not in aliases else
-                    (aliases[str(key)], dict_1.get(aliases[str(key)]) or
-                    dict_2.get(aliases[str(key)]))
-                    for key in set(dict_2) | set(dict_1))
+        keys = [self.__real_key(key)
+                for key in set().union(dict_1, dict_2)]
+        return dict((key, dict_1.get(key) or dict_2.get(key))
+                    for key in keys)
 
     def automatic_env(self):
         self.__automatic_env_applied = not self.__automatic_env_applied
@@ -239,6 +239,7 @@ class Gila():
             del self.__aliases[alias]
 
     def __real_key(self, key: str):
+        key = str(key)
         found_key = None
         if key in self.__aliases:
             found_key = self.__aliases[key]
