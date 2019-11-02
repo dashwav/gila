@@ -128,9 +128,9 @@ class Gila():
         _d = [self.__env, self.__config, self.__defaults]
         for _d2 in _d:
             if _t is None:
-                _t = self.__merge(_d1, _d2, self.__aliases)
+                _t = self.__merge(_d1, _d2)
             else:
-                _t = self.__merge(_t, _d2, self.__aliases)
+                _t = self.__merge(_t, _d2)
         _t = dict([(key, self.__find(key)) for key in _t])
         return _t
 
