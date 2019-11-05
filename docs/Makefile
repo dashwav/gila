@@ -13,7 +13,7 @@ help:
 	@$(SPHINXBUILD) -M help "$(SOURCEDIR)" "$(BUILDDIR)" $(SPHINXOPTS) $(O)
 
 rst:
-	sphinx-apidoc -f -o ./source ../gila/
+	sphinx-apidoc -f -E -o ./source ../gila/
 
 .PHONY: help Makefile
 

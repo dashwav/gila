@@ -10,7 +10,8 @@ Welcome to Gila's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-   modules
+   gila
+   gila.util
 
 
 Indices and tables

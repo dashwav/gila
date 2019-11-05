@@ -1,30 +1,18 @@
-gila.util package
+Gila Utils
 =================
 
-Submodules
-----------
-
-gila.util.errors module
------------------------
+Custom Errors 
+-------------
 
 .. automodule:: gila.util.errors
    :members:
    :undoc-members:
    :show-inheritance:
 
-gila.util.helpers module
-------------------------
+Helper Functions
+----------------
 
 .. automodule:: gila.util.helpers
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-
-Module contents
----------------
-
-.. automodule:: gila.util
    :members:
    :undoc-members:
    :show-inheritance:

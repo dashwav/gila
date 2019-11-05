@@ -13,7 +13,7 @@
 import os
 import sys
 from pathlib import Path
-sys.path.insert(0, os.path.abspath('../../gila'))
+sys.path.insert(0, os.path.abspath('../..'))
 
 
 # -- Project information -----------------------------------------------------
@@ -42,7 +42,7 @@ templates_path = ['_templates']
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['api/yourpackage.rst']
 
-
+add_module_names = False
 # -- Options for HTML output -------------------------------------------------
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
