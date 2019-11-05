@@ -14,13 +14,16 @@ def deep_search(haystack: dict, keypath: List[str]):
     """
     If path = ["foo", "bar", "baz"]
     The assumed values are:
-    haystack = {
-        foo: {
-            bar: {
-                baz: {}
+    ::
+
+        haystack = {
+            foo: {
+                bar: {
+                    baz: {}
+                }
             }
         }
-    }
+
     Where the dict that baz points to is returned
 
     If this is not the case, the config haystack is modified
