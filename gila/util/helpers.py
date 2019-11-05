@@ -28,6 +28,11 @@ def deep_search(haystack: dict, keypath: List[str]):
 
     If this is not the case, the config haystack is modified
     in order to facilitate this
+
+    :param haystack: :py:class:`dict` - dictionary to search
+
+    :param keypath: :py:class:`~typing.List[str]` - path to follow while
+        searching
     """
     if not isinstance(haystack, dict):
         raise TypeError()
@@ -50,6 +55,15 @@ def deep_search(haystack: dict, keypath: List[str]):
 
 
 def yaml_to_dict(filepath: str):
+    """
+    Loads in config from a yaml file to a dictionary using
+    pyyaml_
+
+    .. _pyyaml: https://github.com/yaml/pyyaml
+
+    :params filepath: :py:class:`str` - Filepath to
+        yaml config file to unmarshal
+    """
     try:
         with open(filepath, 'r') as yml_config:
             return safe_load(yml_config)
@@ -58,6 +72,15 @@ def yaml_to_dict(filepath: str):
 
 
 def prop_to_dict(filepath: str):
+    """
+    Loads in config from a dotenv file to a dictionary using
+    the configparser stdlib
+
+    NOTE: All values read in as strings.
+
+    :params filepath: :py:class:`str` - Filepath to
+        dotenv config file to unmarshal
+    """
     try:
         with open(filepath, 'r') as prop_config:
             config = ConfigParser()
@@ -69,6 +92,13 @@ def prop_to_dict(filepath: str):
 
 
 def json_to_dict(filepath: str):
+    """
+    Loads in config from a json file to a dictionary using
+    json stlib
+
+    :params filepath: :py:class:`str` - Filepath to
+        json config file to unmarshal
+    """
     try:
         with open(filepath, 'r') as json_config:
             return json_load(json_config)
@@ -77,6 +107,15 @@ def json_to_dict(filepath: str):
 
 
 def toml_to_dict(filepath: str):
+    """
+    Loads in config from a toml file to a dictionary using
+    toml_
+
+    .. _toml: https://github.com/uiri/toml
+
+    :params filepath: :py:class:`str` - Filepath to
+        toml config file to unmarshal
+    """
     try:
         with open(filepath, 'r') as toml_config:
             return toml_load(toml_config)
@@ -85,6 +124,15 @@ def toml_to_dict(filepath: str):
 
 
 def hcl_to_dict(filepath: str):
+    """
+    Loads in config from an hcl file to a dictionary using
+    pyhcl_
+
+    .. _pyhcl: https://github.com/virtuald/pyhcl
+
+    :params filepath: :py:class:`str` - Filepath to
+        hcl config file to unmarshal
+    """
     try:
         with open(filepath, 'r') as hcl_config:
             return hcl_load(hcl_config)
@@ -93,6 +141,17 @@ def hcl_to_dict(filepath: str):
 
 
 def env_to_dict(filepath: str):
+    """
+    Loads in config from a dotenv file to a dictionary using
+    dotenv_
+
+    .. _dotenv: https://github.com/theskumar/python-dotenv
+
+    NOTE: All values read in as strings.
+
+    :params filepath: :py:class:`str` - Filepath to
+        dotenv config file to unmarshal
+    """
     try:
         config = env_load(filepath)
         return config
