@@ -1,4 +1,4 @@
-Welcome to Gila's documentation!
+Gila
 ================================
 Gila is a python3 configuration library based very heavily on the
 Viper_ config library for Go. It is designed to facilitate making
