@@ -36,23 +36,25 @@ Requires Python 3.6+
 Features
 --------
 
+* Easily load in config values for use in your 12factor application
 * Allow default values to be set for each config key
 * Automatically find config files on multiple paths
 * Load in environment variables automatically that have a specific prefix
 * Support most popular config languages: `yaml, toml, json, properties files, hcl, dotenv`
 * Singleton pattern for ease of use in most applications
 
+Contents
+-----------------------
+
 .. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+   :maxdepth: 1
 
    gila
-   gila.util
+   install
 
 
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+License
+---------------
+Gila is released under the MPL2.0 License. See
+`LICENSE file <https://gitlab.com/dashwav/gila/blob/docs-WIP/LICENSE>`_
+for details.
