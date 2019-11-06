@@ -299,24 +299,6 @@ class Gila():
         """
         if alias == key or alias == self.__real_key(key):
             raise CircularReference("No circular references")
-        found_config_val = None
-        if alias in self.__config:
-            found_config_val = self.__config[alias]
-        if found_config_val:
-            del self.__config[alias]
-            self.__config[key] = found_config_val
-        found_defaults_val = None
-        if alias in self.__defaults:
-            found_defaults_val = self.__defaults[alias]
-        if found_defaults_val:
-            del self.__defaults[alias]
-            self.__defaults[key] = found_defaults_val
-        found_override_val = None
-        if alias in self.__overrides:
-            found_override_val = self.__overrides[alias]
-        if found_override_val:
-            del self.__overrides[alias]
-            self.__overrides[key] = found_override_val
         self.__aliases[alias] = key
 
     def deregister_alias(self, alias: str):
@@ -326,28 +308,12 @@ class Gila():
         :param alias: :py:class:`str`: Alias to remove from config store
         """
         if alias in self.__aliases:
-            # key = self.__aliases[alias]
-            # if key in self.__overrides:
-            #     self.__overrides[alias] = self.__overrides[key]
-            #     del self.__overrides[key]
-            # if key in self.__config:
-            #     self.__config[alias] = self.__config[key]
-            #     del self.__config[key]
-            # if key in self.__defaults:
-            #     self.__defaults[alias] = self.__defaults[key]
-            #     del self.__defaults[key]
-            # if key in self.__env:
-            #     self.__env[alias] = self.__env[key]
-            #     del self.__env[key]
             del self.__aliases[alias]
 
     def __real_key(self, key: str):
         key = str(key)
-        found_key = None
         if key in self.__aliases:
-            found_key = self.__aliases[key]
-        if found_key:
-            return self.__real_key(found_key)
+            return self.__real_key(self.__aliases[key])
         return key
 
     def in_config(self, key: str):
