@@ -58,13 +58,17 @@ __all__ = [
     "is_set",
     "in_config",
     "set_default",
+    "unbind_env",
     "bind_env",
     "override_with_env",
     "register_alias",
+    "deregister_alias",
     "override",
+    "remove_override",
     "read_in_config",
     "get",
-    "debug"
+    "debug",
+    "all_config"
 ]
 
 
@@ -90,12 +94,28 @@ class Gila():
         self.__overrides = {}
         self.__env = {}
 
+    def __merge(self, dict_1: dict, dict_2: dict):
+        """Merge two dictionaries.
+
+        `dict_1` > `dict_2`
+        Works by creating set of all keys between two dictionaries.
+        Then iterates through and gathers values from first dict_1
+        if present, else falls back to dict_2.
+
+        :params dict_1: the primary dictionary to pull results from
+        :params dict_2: the secondary dictionary to pull results from
+        """
+        keys = [self.__real_key(key)
+                for key in set().union(dict_1, dict_2)]
+        return dict((key, dict_1.get(key) or dict_2.get(key))
+                    for key in keys)
+
     def automatic_env(self):
         """
         Tells Gila to automatically load env vars that
         start with the env_prefix, if set.
         """
-        self.__automatic_env_applied = True
+        self.__automatic_env_applied = not self.__automatic_env_applied
 
     def set_config_type(self, filetype: str):
         """
@@ -182,6 +202,22 @@ class Gila():
             return
         self.__env_prefix = prefix
 
+    def all_config(self):
+        """
+        Returns a dictionary representing all of the current config values
+        with the overrides in place.
+        """
+        _d1 = self.__overrides
+        _t = None
+        _d = [self.__env, self.__config, self.__defaults]
+        for _d2 in _d:
+            if _t is None:
+                _t = self.__merge(_d1, _d2)
+            else:
+                _t = self.__merge(_t, _d2)
+        _t = dict([(key, self.__find(key)) for key in _t])
+        return _t
+
     def __merge_with_env_prefix(self, merge: str):
         if not self.__env_prefix:
             return merge.upper()
@@ -257,39 +293,27 @@ class Gila():
         Registers an alias for a given key. When a key has an alias,
         gila.Get(key) and gila.Get(alias) will return the same value
 
-
         :param alias: :py:class:`str`: Alias to give key
         :param key: :py:class:`str`: Real key in the config store
 
         """
         if alias == key or alias == self.__real_key(key):
             raise CircularReference("No circular references")
-        found_config_val = None
-        if alias in self.__config:
-            found_config_val = self.__config[alias]
-        if found_config_val:
-            del self.__config[alias]
-            self.__config[key] = found_config_val
-        found_defaults_val = None
-        if alias in self.__defaults:
-            found_defaults_val = self.__defualts[alias]
-        if found_defaults_val:
-            del self.__defualts[alias]
-            self.__defualts[key] = found_defaults_val
-        found_override_val = None
-        if alias in self.__overrides:
-            found_override_val = self.__overrides[alias]
-        if found_override_val:
-            del self.__overrides[alias]
-            self.__overrides[key] = found_override_val
         self.__aliases[alias] = key
 
+    def deregister_alias(self, alias: str):
+        """
+        Removes an alias for a key in the config store.
+
+        :param alias: :py:class:`str`: Alias to remove from config store
+        """
+        if alias in self.__aliases:
+            del self.__aliases[alias]
+
     def __real_key(self, key: str):
-        found_key = None
+        key = str(key)
         if key in self.__aliases:
-            found_key = self.__aliases[key]
-        if found_key:
-            return self.__real_key(found_key)
+            return self.__real_key(self.__aliases[key])
         return key
 
     def in_config(self, key: str):
@@ -335,6 +359,16 @@ class Gila():
         deepest_dict = deep_search(self.__overrides, path[0:-1])
 
         deepest_dict[last_key] = value
+
+    def remove_override(self, key: str):
+        """
+        Removes the override for a key, if it is currently set
+
+        :param key: :py:class:`str`: They key to remove the override for
+        """
+        key = self.__real_key(key)
+        if key in self.__overrides:
+            del self.__overrides[key]
 
     def read_in_config(self):
         """
@@ -429,6 +463,16 @@ class Gila():
         if not env_key:
             env_key = self.__merge_with_env_prefix(key)
         self.__env[key] = env_key
+
+    def unbind_env(self, key: str):
+        """
+        Removes a binding between an env_var and a key, if it exists
+
+        :param key: :py:class:`key`
+        """
+        key = self.__real_key(key)
+        if key in self.__env:
+            del self.__env[key]
 
     def get(self, key: str):
         """
@@ -526,6 +570,15 @@ def reset():
     _gila = Gila()
 
 
+def all_config():
+    """
+
+    Singleton function for :meth:`.Gila.all_config`
+
+    """
+    return _gila.all_config()
+
+
 def automatic_env():
     """
     Singleton function for :meth:`.Gila.automatic_env`
@@ -549,45 +602,35 @@ def set_config_name(filename: str):
 
 def set_config_file(filepath: str):
     """
-
     Singleton function for :meth:`.Gila.set_config_file`
-
     """
     return _gila.set_config_file(filepath)
 
 
 def add_config_path(filepath: str):
     """
-
     Singleton function for :meth:`.Gila.add_config_path`
-
     """
     return _gila.add_config_path(filepath)
 
 
 def set_env_prefix(prefix: str):
     """
-
     Singleton function for :meth:`.Gila.set_env_prefix`
-
     """
     return _gila.set_env_prefix(prefix)
 
 
 def is_set(key: str):
     """
-
     Singleton function for :meth:`.Gila.is_set`
-
     """
     return _gila.is_set(key)
 
 
 def in_config(key: str):
     """
-
     Singleton function for :meth:`.Gila.in_config`
-
     """
     return _gila.in_config(key)
 
@@ -606,31 +649,46 @@ def bind_env(key: str, env_key: str = None):
     return _gila.bind_env(key, env_key)
 
 
+def unbind_env(key: str):
+    """
+    Singleton function for :meth:`.Gila.unbind_env`
+    """
+    return _gila.unbind_env(key)
+
+
 def override_with_env(prefix: str):
     """
-
     Singleton function for :meth:`.Gila.override_with_env`
-
     """
     return _gila.override_with_env(prefix)
 
 
 def register_alias(alias: str, key: str):
     """
-
     Singleton function for :meth:`.Gila.register_alias`
-
     """
     return _gila.register_alias(alias, key)
 
 
+def deregister_alias(alias: str):
+    """
+    Singleton function for :meth:`.Gila.deregister_alias`
+    """
+    return _gila.deregister_alias(alias)
+
+
 def override(key: str, value: Any):
     """
-
     Singleton function for :meth:`.Gila.override`
-
     """
     return _gila.override(key, value)
+
+
+def remove_override(key: str):
+    """
+    Singleton function for :meth:`.Gila.remove_override`
+    """
+    return _gila.remove_override(key)
 
 
 def read_in_config():
@@ -642,9 +700,7 @@ def read_in_config():
 
 def get(key: str):
     """
-
     Singleton function for :meth:`.Gila.get`
-
     """
     return _gila.get(key)
 
