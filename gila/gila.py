@@ -1,5 +1,31 @@
 """
-This is the main file for the Gila library
+Gila is a python3 configuration library based very heavily on the
+Viper_ config library for Go. It is designed to facilitate making
+12Factor_ apps as easy as possible using python3.
+
+You can either use the Gila library as a singleton pattern, by using
+
+::
+
+    import gila
+
+    gila.get("key")
+
+or you can create an instance to use in your application like this
+
+::
+
+    import gila
+
+    gila_instance = Gila()
+    gila_instance.get("key")
+
+All functions of the gila class are available in the singleton instance
+with the addition of ``gila.reset()``, which will reset the singleton
+instance back to empty.
+
+.. _Viper: https://github.com/spf13/viper
+.. _12Factor: https://12factor.net/
 """
 from typing import List, Any
 from .util.errors import ConfigNotSupported, ConfigFileNotFound
@@ -48,7 +74,7 @@ __all__ = [
 
 class Gila():
     """
-    An instance of the config store
+    An instance of the Gila config store
     """
     def __init__(self):
         global _supported_exts
@@ -82,19 +108,52 @@ class Gila():
                     for key in keys)
 
     def automatic_env(self):
+        """
+        Tells Gila to automatically load env vars that
+        start with the env_prefix, if set.
+        """
         self.__automatic_env_applied = not self.__automatic_env_applied
 
     def set_config_type(self, filetype: str):
+        """
+        Sets the file extension that gila should look for -
+        if not set, gila will look for a file with *any* of the
+        supported filetypes.
+
+        :param filetype: :py:class:`str`: The extension of the
+            config file that Gila should look for
+
+        """
         if not filetype:
             return
         self.__config_type = filetype
 
     def set_config_name(self, filename: str):
+        """
+        Sets the filename that Gila will look for. If the filename is
+        set and the config type is not, Gila will search for a config
+        file with the given config name and **any** of the supported
+        extensions
+
+        :param filename: :py:class:`str`: The name of the
+            config file that Gila should look for
+
+        """
         if not filename:
             return
         self.__config_name = filename
 
     def set_config_file(self, filepath: str):
+        """
+        Sets the filepath to the intended config file. This is an increased
+        level of verbosity than set_config_name and set_config_type, as if
+        the config file is set, Gila will only look for the config file in
+        that one location.
+
+        :param filepath: :py:class:`str`: The filepath to the intended config
+            file
+
+        """
         if not filepath:
             return
         self.__config_file = filepath
@@ -112,11 +171,30 @@ class Gila():
         return self.__config_type
 
     def add_config_path(self, filepath: str):
+        """
+        Adds a filepath to the list of filepaths to search for config files
+        The filepath can be either an absolute path or a path relative to the
+        current working directory
+
+        :param filepath: :py:class:`str`: The filepath to be added
+
+        """
         if not filepath:
             return
         self.__config_paths.append(filepath)
 
     def set_env_prefix(self, prefix: str):
+        """
+        Sets the prefix that the automatic environment loader will use to find
+        values for a given key. For instance, set_env_prefix("prefix") will
+        set the prefix Gila is looking for to ``PREFIX_``. This means that when
+        gila.get("key") is ran and automatic_env is enabled, Gila will look
+        for the value in ``PREFIX_KEY``
+
+        :param prefix: :py:class:`str`: The prefix to be added. This value
+            will be uppercased and have "_" suffixed
+
+        """
         if not prefix:
             return
         self.__env_prefix = prefix
@@ -193,12 +271,27 @@ class Gila():
                 f"Couldn't find config on paths: {self.__config_paths}")
 
     def is_set(self, key: str):
+        """
+        Checks if a given key is in the config store.
+
+        :param key: :py:class:`str`: Key to check
+
+        """
         found_key = self.__find(key.lower())
         if found_key is not None:
             return True
         return False
 
     def register_alias(self, alias: str, key: str):
+        """
+        Registers an alias for a given key. When a key has an alias,
+        gila.Get(key) and gila.Get(alias) will return the same value
+
+
+        :param alias: :py:class:`str`: Alias to give key
+        :param key: :py:class:`str`: Real key in the config store
+
+        """
         if alias == key or alias == self.__real_key(key):
             raise CircularReference("No circular references")
         found_config_val = None
@@ -248,11 +341,23 @@ class Gila():
         return key
 
     def in_config(self, key: str):
+        """
+        Checks if a given key is found in the config file provided. Returns
+        false if no file has been loaded in yet
+
+        :param key: :py:class:`str`: key to check in config values
+
+        """
         return key in self.__config
 
     def set_default(self, key: str, value: Any):
         """
-        Sets the default value for key to value
+        Sets the default value for key to value. If no other values are
+        found when running gila.get(key), the default value will be returned.
+
+        :param key: :py:class:`str`: The real key in the config store
+        :param value: Any: The default value to be set for the key
+
         """
         key = self.__real_key(key)
 
@@ -264,7 +369,12 @@ class Gila():
 
     def override(self, key: str, value: Any):
         """
-        Sets the override value for key to value
+        Sets the override value for a given key. Override values will take
+        precedence over all other found values of a given key
+
+        :param key: :py:class:`str`: The key in the config store
+        :param value: Any: The override value to be set for the key
+
         """
         key = self.__real_key(key)
 
@@ -281,7 +391,10 @@ class Gila():
 
     def read_in_config(self):
         """
-        Will read in config from file
+        Will read in config from file. Gila will iterate through the given
+        filepaths, and return the first file found in a config path that has
+        the extension that is set with gila.set_config_type() if it is set, or
+        the first file with a supported filetype.
         """
         filename = self.__get_config_file()
         config_type = self.__get_config_type()
@@ -307,7 +420,14 @@ class Gila():
     def override_with_env(self, prefix: str):
         """
         Finds all env vars with given prefix and sets them
-        as overrides with a lowercase key
+        as overrides with a lowercase key. This would allow for a one-time
+        load of environment vars to the config store. The loaded env vars will
+        be loaded in as overrides, meaning they will take precedence over all
+        other values
+
+        :param prefix: :py:class:`str`: The prefix for Gila to use while
+            searching.
+
         """
         for key, value in os_env.items():
             if key.startswith(prefix):
@@ -342,6 +462,22 @@ class Gila():
         return None
 
     def bind_env(self, key: str, env_key: str = None):
+        """
+        Binds a given key to an environemnt variable. Default usage with
+        bind_env(key) would bind the config value ``key`` with the environment
+        value ``KEY``. If an env_key is passed in, it will be used instead of
+        the default uppercased key. eg bind_env(key, env_key) will bind the
+        config value of ``key`` to ``ENV_KEY``.
+
+        NOTE: If env_key is not passed in, the key will be merged with a given
+        prefix, should one exist.
+
+        :param key: :py:class:`str`: Key to bind to
+        :param env_key: :py:class:`str`:  (Default value = None) Optional
+            env key to bind the config key to. If not present, fallback will
+            be key.upper()
+
+        """
         key = key.lower()
         if not env_key:
             env_key = self.__merge_with_env_prefix(key)
@@ -353,6 +489,16 @@ class Gila():
             del self.__env[key]
 
     def get(self, key: str):
+        """
+        This fetches a value from the config store for a given key. Returns
+        None if no value is found.
+
+        The order of precedence on get is: overrides > environment variables
+        > config vars > default values.
+
+        :param key: :py:class:`str`: The key to search the config store for
+
+        """
         return self.__find(key)
 
     def __find(self, key: str):
@@ -414,6 +560,9 @@ class Gila():
         return None
 
     def debug(self):
+        """
+        Prints all of the instance internal dictionaries for debugging purposes
+        """
         print(f'Aliases: {self.__aliases}\n')
         print(f'Override: {self.__overrides}\n')
         print(f'Env: {self.__env}\n')
@@ -428,6 +577,9 @@ _gila = Gila()
 
 
 def reset():
+    """
+    Resets all of the values in the singleton instance of Gila
+    """
     global _gila
     _gila = Gila()
 
@@ -437,42 +589,82 @@ def all_config():
 
 
 def automatic_env():
+    """
+    Singleton function for :meth:`.Gila.automatic_env`
+    """
     return _gila.automatic_env()
 
 
 def set_config_type(filetype: str):
+    """
+    Singleton function for :meth:`.Gila.set_config_type`
+    """
     return _gila.set_config_file(filetype)
 
 
 def set_config_name(filename: str):
+    """
+    Singleton function for :meth:`.Gila.set_config_name`
+    """
     return _gila.set_config_name(filename)
 
 
 def set_config_file(filepath: str):
+    """
+
+    Singleton function for :meth:`.Gila.set_config_file`
+
+    """
     return _gila.set_config_file(filepath)
 
 
 def add_config_path(filepath: str):
+    """
+
+    Singleton function for :meth:`.Gila.add_config_path`
+
+    """
     return _gila.add_config_path(filepath)
 
 
 def set_env_prefix(prefix: str):
+    """
+
+    Singleton function for :meth:`.Gila.set_env_prefix`
+
+    """
     return _gila.set_env_prefix(prefix)
 
 
 def is_set(key: str):
+    """
+
+    Singleton function for :meth:`.Gila.is_set`
+
+    """
     return _gila.is_set(key)
 
 
 def in_config(key: str):
+    """
+
+    Singleton function for :meth:`.Gila.in_config`
+
+    """
     return _gila.in_config(key)
 
 
 def set_default(key: str, value: Any):
+    """
+    Singleton function for :meth:`.Gila.set_default`
+    """
     return _gila.set_default(key, value)
 
 
 def bind_env(key: str, env_key: str = None):
+    """
+    Singleton function for :meth:`.Gila.bind_env`
+    """
     return _gila.bind_env(key, env_key)
 
 
@@ -481,10 +673,20 @@ def unbind_env(key: str):
 
 
 def override_with_env(prefix: str):
+    """
+
+    Singleton function for :meth:`.Gila.override_with_env`
+
+    """
     return _gila.override_with_env(prefix)
 
 
 def register_alias(alias: str, key: str):
+    """
+
+    Singleton function for :meth:`.Gila.register_alias`
+
+    """
     return _gila.register_alias(alias, key)
 
 
@@ -493,6 +695,11 @@ def deregister_alias(alias: str):
 
 
 def override(key: str, value: Any):
+    """
+
+    Singleton function for :meth:`.Gila.override`
+
+    """
     return _gila.override(key, value)
 
 
@@ -501,12 +708,23 @@ def remove_override(key: str):
 
 
 def read_in_config():
+    """
+    Singleton function for :meth:`.Gila.read_in_config`
+    """
     return _gila.read_in_config()
 
 
 def get(key: str):
+    """
+
+    Singleton function for :meth:`.Gila.get`
+
+    """
     return _gila.get(key)
 
 
 def debug():
+    """
+    Singleton function for :meth:`.Gila.debug`
+    """
     return _gila.debug()
