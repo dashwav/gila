@@ -101,6 +101,9 @@ class Gila():
         Works by creating set of all keys between two dictionaries.
         Then iterates through and gathers values from first dict_1
         if present, else falls back to dict_2.
+
+        :params dict_1: the primary dictionary to pull results from
+        :params dict_2: the secondary dictionary to pull results from
         """
         keys = [self.__real_key(key)
                 for key in set().union(dict_1, dict_2)]
@@ -200,7 +203,10 @@ class Gila():
         self.__env_prefix = prefix
 
     def all_config(self):
-        """Get all config values."""
+        """
+        Returns a dictionary representing all of the current config values
+        with the overrides in place.
+        """
         _d1 = self.__overrides
         _t = None
         _d = [self.__env, self.__config, self.__defaults]
@@ -287,7 +293,6 @@ class Gila():
         Registers an alias for a given key. When a key has an alias,
         gila.Get(key) and gila.Get(alias) will return the same value
 
-
         :param alias: :py:class:`str`: Alias to give key
         :param key: :py:class:`str`: Real key in the config store
 
@@ -315,20 +320,25 @@ class Gila():
         self.__aliases[alias] = key
 
     def deregister_alias(self, alias: str):
+        """
+        Removes an alias for a key in the config store.
+
+        :param alias: :py:class:`str`: Alias to remove from config store
+        """
         if alias in self.__aliases:
-            key = self.__aliases[alias]
-            if key in self.__overrides:
-                self.__overrides[alias] = self.__overrides[key]
-                del self.__overrides[key]
-            if key in self.__config:
-                self.__config[alias] = self.__config[key]
-                del self.__config[key]
-            if key in self.__defaults:
-                self.__defaults[alias] = self.__defaults[key]
-                del self.__defaults[key]
-            if key in self.__env:
-                self.__env[alias] = self.__env[key]
-                del self.__env[key]
+            # key = self.__aliases[alias]
+            # if key in self.__overrides:
+            #     self.__overrides[alias] = self.__overrides[key]
+            #     del self.__overrides[key]
+            # if key in self.__config:
+            #     self.__config[alias] = self.__config[key]
+            #     del self.__config[key]
+            # if key in self.__defaults:
+            #     self.__defaults[alias] = self.__defaults[key]
+            #     del self.__defaults[key]
+            # if key in self.__env:
+            #     self.__env[alias] = self.__env[key]
+            #     del self.__env[key]
             del self.__aliases[alias]
 
     def __real_key(self, key: str):
@@ -385,6 +395,11 @@ class Gila():
         deepest_dict[last_key] = value
 
     def remove_override(self, key: str):
+        """
+        Removes the override for a key, if it is currently set
+
+        :param key: :py:class:`str`: They key to remove the override for
+        """
         key = self.__real_key(key)
         if key in self.__overrides:
             del self.__overrides[key]
@@ -484,6 +499,11 @@ class Gila():
         self.__env[key] = env_key
 
     def unbind_env(self, key: str):
+        """
+        Removes a binding between an env_var and a key, if it exists
+
+        :param key: :py:class:`key`
+        """
         key = self.__real_key(key)
         if key in self.__env:
             del self.__env[key]
@@ -585,6 +605,11 @@ def reset():
 
 
 def all_config():
+    """
+
+    Singleton function for :meth:`.Gila.all_config`
+
+    """
     return _gila.all_config()
 
 
@@ -659,6 +684,9 @@ def bind_env(key: str, env_key: str = None):
 
 
 def unbind_env(key: str):
+    """
+    Singleton function for :meth:`.Gila.unbind_env`
+    """
     return _gila.unbind_env(key)
 
 

@@ -40,11 +40,33 @@ class TestBaseGila(unittest.TestCase):
         gila.register_alias(alias, key)
         self.assertEqual(gila.get(alias), value)
 
+    def test_setting_values_with_alias_then_remove(self):
+        key = "key"
+        value = "value"
+        gila.override(key, value)
+        self.assertEqual(gila.get(key), value)
+
+        alias = "alias_key"
+        gila.register_alias(alias, key)
+        self.assertEqual(gila.get(alias), value)
+
+        gila.deregister_alias(alias)
+        self.assertEqual(gila.get(key), value)
+
     def test_set_env(self):
         key = "GILA_TEST"
         var = "VALUES"
         os_env[key] = var
         gila.bind_env(key)
+        self.assertEqual(gila.get(key.lower()), var)
+
+    def test_set_env_and_remove(self):
+        key = "GILA_TEST"
+        var = "VALUES"
+        os_env[key] = var
+        gila.bind_env(key)
+        self.assertEqual(gila.get(key.lower()), var)
+        gila.unbind_env(key)
         self.assertEqual(gila.get(key.lower()), var)
 
     def test_set_env_with_key(self):
@@ -74,6 +96,34 @@ class TestBaseGila(unittest.TestCase):
         singleton_helper()
         self.assertEqual(gila.get(key), 'new_value')
 
+    def test_all_config(self):
+        key = "gila_key"
+        env_key2 = "env_key"
+        env_value = "test"
+        env_value2 = "This is the env var"
+        override_value = "value"
+        os_env[key.upper()] = env_value
+        os_env[env_key2.upper()] = env_value2
+        gila.bind_env(key)
+        gila.bind_env(env_key2)
+        self.assertEqual(gila.get(key), env_value)
+        self.assertEqual(gila.get(env_key2), env_value2)
+        gila.override(key, override_value)
+        self.assertEqual(gila.get(key), override_value)
+        config_key = "filetype"
+        default_value = "test"
+        gila.set_default(config_key, default_value)
+        self.assertEqual(gila.get(config_key), default_value)
+        gila.set_config_name('yaml_config')
+        gila.add_config_path('./tests/configs')
+        gila.read_in_config()
+        self.assertEqual(gila.get(config_key), "yaml")
+
+        all_conf = gila.all_config()
+        self.assertEqual(all_conf.get(key), override_value)
+        self.assertEqual(all_conf.get(env_key2), env_value2)
+        self.assertEqual(all_conf.get(config_key), "yaml")
+
 
 class TestOverrides(unittest.TestCase):
 
@@ -89,6 +139,18 @@ class TestOverrides(unittest.TestCase):
         self.assertEqual(gila.get(key), env_value)
         gila.override(key, override_value)
         self.assertEqual(gila.get(key), override_value)
+
+    def test_override_remove(self):
+        key = "gila_key"
+        env_value = "test"
+        override_value = "value"
+        os_env[key.upper()] = env_value
+        gila.bind_env(key)
+        self.assertEqual(gila.get(key), env_value)
+        gila.override(key, override_value)
+        self.assertEqual(gila.get(key), override_value)
+        gila.remove_override(key)
+        self.assertEqual(gila.get(key), env_value)
 
     def test_env_precendence_config(self):
         key = "filetype"
