@@ -327,19 +327,19 @@ class Gila():
         :param alias: :py:class:`str`: Alias to remove from config store
         """
         if alias in self.__aliases:
-            key = self.__aliases[alias]
-            if key in self.__overrides:
-                self.__overrides[alias] = self.__overrides[key]
-                del self.__overrides[key]
-            if key in self.__config:
-                self.__config[alias] = self.__config[key]
-                del self.__config[key]
-            if key in self.__defaults:
-                self.__defaults[alias] = self.__defaults[key]
-                del self.__defaults[key]
-            if key in self.__env:
-                self.__env[alias] = self.__env[key]
-                del self.__env[key]
+            # key = self.__aliases[alias]
+            # if key in self.__overrides:
+            #     self.__overrides[alias] = self.__overrides[key]
+            #     del self.__overrides[key]
+            # if key in self.__config:
+            #     self.__config[alias] = self.__config[key]
+            #     del self.__config[key]
+            # if key in self.__defaults:
+            #     self.__defaults[alias] = self.__defaults[key]
+            #     del self.__defaults[key]
+            # if key in self.__env:
+            #     self.__env[alias] = self.__env[key]
+            #     del self.__env[key]
             del self.__aliases[alias]
 
     def __real_key(self, key: str):
