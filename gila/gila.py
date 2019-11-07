@@ -650,13 +650,6 @@ def remove_override(key: str):
     return _gila.remove_override(key)
 
 
-def remove_override(key: str):
-    """
-    Singleton function for :meth:`.Gila.remove_override`
-    """
-    return _gila.remove_override(key)
-
-
 def read_in_config():
     # Singleton function for Gila.read_in_config
     return _gila.read_in_config()
