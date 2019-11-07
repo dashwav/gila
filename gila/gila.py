@@ -571,142 +571,100 @@ def reset():
 
 
 def all_config():
-    """
-
-    Singleton function for :meth:`.Gila.all_config`
-
-    """
+    # Singleton function for .Gila.all_config
     return _gila.all_config()
 
 
 def automatic_env():
-    """
-    Singleton function for :meth:`.Gila.automatic_env`
-    """
+    # Singleton function for Gila.automatic_env
     return _gila.automatic_env()
 
 
 def set_config_type(filetype: str):
-    """
-    Singleton function for :meth:`.Gila.set_config_type`
-    """
+    # Singleton function for Gila.set_config_type
     return _gila.set_config_file(filetype)
 
 
 def set_config_name(filename: str):
-    """
-    Singleton function for :meth:`.Gila.set_config_name`
-    """
+    # Singleton function for Gila.set_config_name
     return _gila.set_config_name(filename)
 
 
 def set_config_file(filepath: str):
-    """
-    Singleton function for :meth:`.Gila.set_config_file`
-    """
+    # Singleton function for Gila.set_config_file
     return _gila.set_config_file(filepath)
 
 
 def add_config_path(filepath: str):
-    """
-    Singleton function for :meth:`.Gila.add_config_path`
-    """
+    # Singleton function for Gila.add_config_path
     return _gila.add_config_path(filepath)
 
 
 def set_env_prefix(prefix: str):
-    """
-    Singleton function for :meth:`.Gila.set_env_prefix`
-    """
+    # Singleton function for Gila.set_env_prefix
     return _gila.set_env_prefix(prefix)
 
 
 def is_set(key: str):
-    """
-    Singleton function for :meth:`.Gila.is_set`
-    """
+    # Singleton function for Gila.is_set
     return _gila.is_set(key)
 
 
 def in_config(key: str):
-    """
-    Singleton function for :meth:`.Gila.in_config`
-    """
+    # Singleton function for Gila.in_config
     return _gila.in_config(key)
 
 
 def set_default(key: str, value: Any):
-    """
-    Singleton function for :meth:`.Gila.set_default`
-    """
+    # Singleton function for Gila.set_default
     return _gila.set_default(key, value)
 
 
 def bind_env(key: str, env_key: str = None):
-    """
-    Singleton function for :meth:`.Gila.bind_env`
-    """
+    # Singleton function for Gila.bind_env
     return _gila.bind_env(key, env_key)
 
 
 def unbind_env(key: str):
-    """
-    Singleton function for :meth:`.Gila.unbind_env`
-    """
+    # Singleton function for Gila.unbind_env
     return _gila.unbind_env(key)
 
 
 def override_with_env(prefix: str):
-    """
-    Singleton function for :meth:`.Gila.override_with_env`
-    """
+    # Singleton function for Gila.override_with_env
     return _gila.override_with_env(prefix)
 
 
 def register_alias(alias: str, key: str):
-    """
-    Singleton function for :meth:`.Gila.register_alias`
-    """
+    # Singleton function for Gila.register_alias
     return _gila.register_alias(alias, key)
 
 
 def deregister_alias(alias: str):
-    """
-    Singleton function for :meth:`.Gila.deregister_alias`
-    """
+    # Singleton function for Gila.deregister_alias
     return _gila.deregister_alias(alias)
 
 
 def override(key: str, value: Any):
-    """
-    Singleton function for :meth:`.Gila.override`
-    """
+    # Singleton function for Gila.override
     return _gila.override(key, value)
 
 
 def remove_override(key: str):
-    """
-    Singleton function for :meth:`.Gila.remove_override`
-    """
+    # Singleton function for Gila.remove_override
     return _gila.remove_override(key)
 
 
 def read_in_config():
-    """
-    Singleton function for :meth:`.Gila.read_in_config`
-    """
+    # Singleton function for Gila.read_in_config
     return _gila.read_in_config()
 
 
 def get(key: str):
-    """
-    Singleton function for :meth:`.Gila.get`
-    """
+    # Singleton function for Gila.get
     return _gila.get(key)
 
 
 def debug():
-    """
-    Singleton function for :meth:`.Gila.debug`
-    """
+    # Singleton function for Gila.debug
     return _gila.debug()
