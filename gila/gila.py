@@ -28,11 +28,11 @@ instance back to empty.
 .. _12Factor: https://12factor.net/
 """
 from typing import List, Any
-from .util.errors import ConfigNotSupported, ConfigFileNotFound
-from .util.errors import CircularReference
-from .util.helpers import deep_search, yaml_to_dict, prop_to_dict
-from .util.helpers import json_to_dict, toml_to_dict, hcl_to_dict
-from .util.helpers import env_to_dict
+from .util.errors import (ConfigNotSupported, ConfigFileNotFound,
+                          CircularReference)
+from .util.helpers import (deep_search, yaml_to_dict, prop_to_dict,
+                           json_to_dict, toml_to_dict, hcl_to_dict,
+                           dict_merge, env_to_dict)
 from os import path as os_path
 from os import environ as os_env
 
@@ -93,22 +93,6 @@ class Gila():
         self.__defaults = {}
         self.__overrides = {}
         self.__env = {}
-
-    def __merge(self, dict_1: dict, dict_2: dict):
-        """Merge two dictionaries.
-
-        `dict_1` > `dict_2`
-        Works by creating set of all keys between two dictionaries.
-        Then iterates through and gathers values from first dict_1
-        if present, else falls back to dict_2.
-
-        :params dict_1: the primary dictionary to pull results from
-        :params dict_2: the secondary dictionary to pull results from
-        """
-        keys = [self.__real_key(key)
-                for key in set().union(dict_1, dict_2)]
-        return dict((key, dict_1.get(key) or dict_2.get(key))
-                    for key in keys)
 
     def automatic_env(self):
         """
@@ -212,9 +196,10 @@ class Gila():
         _d = [self.__env, self.__config, self.__defaults]
         for _d2 in _d:
             if _t is None:
-                _t = self.__merge(_d1, _d2)
+                _t = dict_merge(_d1, _d2)
             else:
-                _t = self.__merge(_t, _d2)
+                _t = dict_merge(_t, _d2)
+        _t = [self.__real_key(key) for key in _t]
         _t = dict([(key, self.__find(key)) for key in _t])
         return _t
 
@@ -335,8 +320,6 @@ class Gila():
         :param value: Any: The default value to be set for the key
 
         """
-        key = self.__real_key(key)
-
         path = key.split(self.__key_delim)
         last_key = path[-1]
         deepest_dict = deep_search(self.__defaults, path[0:-1])
@@ -352,8 +335,6 @@ class Gila():
         :param value: Any: The override value to be set for the key
 
         """
-        key = self.__real_key(key)
-
         path = key.split(self.__key_delim)
         last_key = path[-1]
         deepest_dict = deep_search(self.__overrides, path[0:-1])
@@ -366,7 +347,6 @@ class Gila():
 
         :param key: :py:class:`str`: They key to remove the override for
         """
-        key = self.__real_key(key)
         if key in self.__overrides:
             del self.__overrides[key]
 
@@ -470,7 +450,6 @@ class Gila():
 
         :param key: :py:class:`key`
         """
-        key = self.__real_key(key)
         if key in self.__env:
             del self.__env[key]
 
