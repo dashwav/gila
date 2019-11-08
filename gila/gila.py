@@ -388,6 +388,9 @@ class Gila():
             config = env_to_dict(filename)
         else:
             config = {}
+        if not found_config:
+            raise ConfigFileNotFound(
+                f"Couldn't find config {filename}")
         self.__config = config
 
     def override_with_env(self, prefix: str):
