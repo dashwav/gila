@@ -15,7 +15,7 @@ or you can create an instance to use in your application like this
 
 ::
 
-    import gila
+    from gila import Gila
 
     gila_instance = Gila()
     gila_instance.get("key")
@@ -47,6 +47,9 @@ _supported_exts = [
 _key_delim = "."
 
 __all__ = [
+    "ConfigNotSupported",
+    "ConfigFileNotFound",
+    "CircularReference",
     "Gila",
     "reset",
     "automatic_env",
@@ -76,7 +79,14 @@ class Gila():
     """
     An instance of the Gila config store
     """
+
     def __init__(self):
+        self.reset()
+
+    def reset(self):
+        """
+        Resets all of the values in the singleton instance of Gila
+        """
         global _supported_exts
         global _key_delim
         self.__supported_exts = _supported_exts
@@ -93,22 +103,6 @@ class Gila():
         self.__defaults = {}
         self.__overrides = {}
         self.__env = {}
-
-    def __merge(self, dict_1: dict, dict_2: dict):
-        """Merge two dictionaries.
-
-        `dict_1` > `dict_2`
-        Works by creating set of all keys between two dictionaries.
-        Then iterates through and gathers values from first dict_1
-        if present, else falls back to dict_2.
-
-        :params dict_1: the primary dictionary to pull results from
-        :params dict_2: the secondary dictionary to pull results from
-        """
-        keys = [self.__real_key(key)
-                for key in set().union(dict_1, dict_2)]
-        return dict((key, dict_1.get(key) or dict_2.get(key))
-                    for key in keys)
 
     def automatic_env(self):
         """
@@ -351,6 +345,7 @@ class Gila():
         :param value: Any: The override value to be set for the key
 
         """
+        key = self.__real_key(key)
         path = key.split(self.__key_delim)
         last_key = path[-1]
         deepest_dict = deep_search(self.__overrides, path[0:-1])
@@ -363,6 +358,7 @@ class Gila():
 
         :param key: :py:class:`str`: They key to remove the override for
         """
+        key = self.__real_key(key)
         if key in self.__overrides:
             del self.__overrides[key]
 
@@ -558,15 +554,12 @@ _gila = Gila()
 
 
 def reset():
-    """
-    Resets all of the values in the singleton instance of Gila
-    """
-    global _gila
-    _gila = Gila()
+    # Singleton function for Gila.reset
+    _gila.reset()
 
 
 def all_config():
-    # Singleton function for .Gila.all_config
+    # Singleton function for Gila.all_config
     return _gila.all_config()
 
 
@@ -662,4 +655,4 @@ def get(key: str):
 
 def debug():
     # Singleton function for Gila.debug
-    return _gila.debug()
+    _gila.debug()

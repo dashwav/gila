@@ -3,6 +3,7 @@
 Gila is a python3 configuration library based very heavily on the [viper](https://github.com/spf13/viper) config library for Go. It is designed to facilitate making [12 factor](https://12factor.net/) apps as easy as possible using python3.
 
 # Motivation
+
 After having used the Viper config library in Go, I became very used to the ease of use and flexibility that it offered. After looking for a library to use in my python projects I was unable to find one that combined all of the very useful features that Viper supports.
 
 # Features
@@ -11,7 +12,8 @@ After having used the Viper config library in Go, I became very used to the ease
 * Automatically find config files on multiple paths
 * Load in environment variables automatically that have a specific prefix
 * Support most popular config languages: `yaml, toml, json, properties files, hcl, dotenv`
-* Singleton pattern for ease of use in most applications
+* Singleton pattern available for ease of use in most applications
+* Hierarchical loading for non-ambiguous results.
 
 # Installation
 
@@ -37,6 +39,10 @@ gila.automatic_env()
 # eg. in docker compose or k8s manifest
 environ['GILA_HOST'] = 'localhost:9999'
 
+# This is the preferred method of grabbing
+# the configurations. Other methods exist (all_config, debug)
+# but this method is the most performant for single
+# value calls.
 host = gila.get('host')
 allow_insecure = gila.get('allow_insecure')
 
@@ -63,6 +69,10 @@ print(f'Insecure allowed: {allow_insecure}')
   * Values will be cast to strings
   * No nested values supported
 
+
+# Additional Help
+Check out our documentation on (ReadTheDocs)[https://gila.readthedocs.io/en/latest/gila.html#] or if you prefer minimum working examples, checkout the directory </examples/> which house a plethora of use cases from simple to more complex configurations.
+
 # Credits
 Steve Francia [spf13](https://github.com/spf13) for creating the Viper library
 
@@ -73,5 +83,5 @@ Authors of [pyyaml](https://github.com/yaml/pyyaml), [pyhcl](https://github.com/
 
 * Case sensitivity - all keys in Gila are case sensitive, this allows for proper json, yaml, and toml support. ENV keys are not case sensitive unless manually bound.
 * No support for remote config - while I think that supporting consul and etcd is a very nice feature, I think at this moment in time that it is a feature that belongs in a seperate library.
-* No support for command flags - Viper relies pretty heavily on [Cobra](https://github.com/spf13/cobra) companionship for command flags and as of right now Gila has no similar companion library - if you want to make one get in contact, I would be interested in adding this feature.
+* No support for command flags - Viper relies pretty heavily on [Cobra](https://github.com/spf13/cobra) companionship for command flags. You should choose your own flavour of CLI parser (docopts, argparse, etc) and pair it with this library (check out our examples).
 * Watching for changes in config files - I would very much so like to add this feature, but it is not a feature that I felt was necessary at `v1.0.0`. If you would like this feature you can thumbs up [the issue](https://gitlab.com/dashwav/gila/issues/1), or open a PR with an implementation.
