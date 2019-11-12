@@ -116,7 +116,7 @@ class TestBaseGila(unittest.TestCase):
         self.assertEqual(gila.get(config_key), default_value)
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get(config_key), "yaml")
 
         all_conf = gila.all_config()
@@ -157,7 +157,7 @@ class TestOverrides(unittest.TestCase):
         env_value = "test"
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("filetype"), "yaml")
         os_env[key.upper()] = env_value
         gila.bind_env(key)
@@ -170,7 +170,7 @@ class TestOverrides(unittest.TestCase):
         self.assertEqual(gila.get(key), default_value)
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("filetype"), "yaml")
 
 
@@ -205,7 +205,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_yaml(self):
         gila.set_config_name('yaml_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("exists"), True)
         self.assertEqual(gila.get("meta.filename"), 'yaml_config')
         self.assertIsInstance(gila.get("contents"), list)
@@ -213,7 +213,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_prop(self):
         gila.set_config_name('prop_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("exists"), 'True')
         self.assertEqual(gila.get("contents.filetype.value_type"), 'string')
         self.assertIsNone(gila.get("contents"))
@@ -221,7 +221,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_json(self):
         gila.set_config_name('json_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("exists"), True)
         self.assertEqual(gila.get("meta.filename"), 'json_config')
         self.assertIsInstance(gila.get("contents"), list)
@@ -229,7 +229,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_toml(self):
         gila.set_config_name('toml_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("exists"), True)
         self.assertEqual(gila.get("meta.filename"), 'toml_config')
         self.assertIsInstance(gila.get("contents"), list)
@@ -237,7 +237,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_hcl(self):
         gila.set_config_name('hcl_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("exists"), True)
         self.assertEqual(gila.get("meta.filename"), 'hcl_config')
         self.assertIsInstance(gila.get("contents"), list)
@@ -245,7 +245,7 @@ class TestReadConfigs(unittest.TestCase):
     def test_read_in_env(self):
         gila.set_config_name('env_config')
         gila.add_config_path('./tests/configs')
-        gila.read_in_config()
+        gila.read_config_file()
         self.assertEqual(gila.get("EXISTS"), 'True')
 
 
