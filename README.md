@@ -71,7 +71,7 @@ print(f'Insecure allowed: {allow_insecure}')
 
 
 # Additional Help
-Check out our documentation on (ReadTheDocs)[https://gila.readthedocs.io/en/latest/gila.html#] or if you prefer minimum working examples, checkout the directory </examples/> which house a plethora of use cases from simple to more complex configurations.
+Check out our documentation on [ReadTheDocs](https://gila.readthedocs.io/en/latest/gila.html#) or if you prefer minimum working examples, checkout the directory </examples/> which house a plethora of use cases from simple to more complex configurations.
 
 # Credits
 Steve Francia [spf13](https://github.com/spf13) for creating the Viper library
