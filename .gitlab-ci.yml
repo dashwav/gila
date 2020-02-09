@@ -20,7 +20,7 @@ cache:
 
 stages:
   - test
-  - verify
+  - bump
   - build
   - deploy
 
@@ -51,9 +51,12 @@ test-py38:
 verify:
   only:
     - tags
-  stage: verify
+  stage: bump
   script:
-    - ./verify.sh
+    - ./update-version.sh
+    - git add ./.version
+    - git commit -m "Bump version [skip ci]"
+    - git push origin develop
 
 build:
   stage: build
