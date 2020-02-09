@@ -1,7 +1,6 @@
-
 # Official language image. Look for the different tagged releases at:
 # https://hub.docker.com/r/library/python/tags/
-image: python:3.6-slim
+image: python:3.6
 
 # Change pip's cache directory to be inside the project directory since we can
 # only cache local items.
@@ -19,43 +18,55 @@ cache:
     - venv/
 
 stages:
-  - test
+#   - test
   - bump
   - build
-  - deploy
+#   - deploy
 
-test-py36:
-  image: python:3.6-slim
-  stage: test
-  script:
-    - python -V  # Print out python version for debugging
-    - pip install tox flake8 
-    - tox -e py36,flake8
+# test-py36:
+#   image: python:3.6-slim
+#   stage: test
+#   script:
+#     - python -V  # Print out python version for debugging
+#     - pip install tox flake8 
+#     - tox -e py36,flake8
 
-test-py37:
-  image: python:3.7-slim
-  stage: test
-  script:
-    - python -V  # Print out python version for debugging
-    - pip install tox flake8 
-    - tox -e py37,flake8
+# test-py37:
+#   image: python:3.7-slim
+#   stage: test
+#   script:
+#     - python -V  # Print out python version for debugging
+#     - pip install tox flake8 
+#     - tox -e py37,flake8
 
-test-py38:
-  image: python:3.8-slim
-  stage: test
-  script:
-    - python -V  # Print out python version for debugging
-    - pip install tox flake8 
-    - tox -e py38,flake8
+# test-py38:
+#   image: python:3.8-slim
+#   stage: test
+#   script:
+#     - python -V  # Print out python version for debugging
+#     - pip install tox flake8 
+#     - tox -e py38,flake8
 
-verify:
+bump-version:
+  variables:
+    GIT_STRATEGY: none
   only:
     - tags
   stage: bump
+  before_script:
+    - 'which ssh-agent || ( apt-get update -y && apt-get install openssh-client -y )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$GIT_SSH_KEY")
+    - git config --global user.email "dashwav@gmail.com"
+    - git config --global user.name "GitLabCI"
+    - mkdir -p ~/.ssh
   script:
+    - git clone git@gitlab.dev.terastrm.net:${CI_PROJECT_PATH}.git
+    - cd ${CI_PROJECT_NAME}
     - ./update-version.sh
     - git add ./.version
     - git commit -m "Bump version [skip ci]"
+    - git checkout -b develop
     - git push origin develop
 
 build:
@@ -72,10 +83,10 @@ build:
       - dist/*.tar.gz
       - dist/*.whl
 
-deploy:
-  stage: deploy
-  only:
-    - tags
-  script:
-    - pip install twine
-    - twine upload dist/*
+# deploy:
+#   stage: deploy
+#   only:
+#     - tags
+#   script:
+#     - pip install twine
+#     - twine upload dist/*
