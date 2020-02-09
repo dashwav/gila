@@ -61,7 +61,7 @@ bump-version:
     - git config --global user.name "GitLabCI"
     - mkdir -p ~/.ssh
   script:
-    - git clone git@gitlab.dev.terastrm.net:${CI_PROJECT_PATH}.git
+    - git clone git@gitlab.com:${CI_PROJECT_PATH}.git
     - cd ${CI_PROJECT_NAME}
     - ./update-version.sh
     - git add ./.version
