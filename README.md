@@ -1,6 +1,6 @@
 # Gila
 
-Gila is a python3 configuration library based very heavily on the [viper](https://github.com/spf13/viper) config library for Go. It is designed to facilitate making [12 factor](https://12factor.net/) apps as easy as possible using python3.
+Gila is a python3 layered configuration library based very heavily on the [viper](https://github.com/spf13/viper) config library for Go. It is designed to facilitate making [12 factor](https://12factor.net/) apps as easy as possible using python3.
 
 # Motivation
 
