@@ -1,31 +1,23 @@
 Gila
 ================================
+
+.. image:: https://img.shields.io/gitlab/pipeline/dashwav/gila/develop
+    :target: https://gitlab.com/dashwav/gila/pipelines
+    
+.. image:: https://img.shields.io/pypi/v/gila
+    :target: https://pypi.org/project/gila/ 
+
+.. image:: https://img.shields.io/pypi/pyversions/gila
+    :target: https://pypi.org/project/gila/
+
+.. image:: https://api.codacy.com/project/badge/Grade/a911b2a08953491aab19a3171e556aa9
+    :target: https://app.codacy.com/manual/dashwav/gila/dashboard
+ 
 Gila is a python3 configuration library based very heavily on the
 Viper_ config library for Go. It is designed to facilitate making
 12Factor_ apps as easy as possible using python3.
 
-You can either use the Gila library as a singleton pattern, by using
-
-::
-
-    import gila
-
-    gila.get("key")
-
-or you can create an instance to use in your application like this
-
-::
-
-    import gila
-
-    gila_instance = Gila()
-    gila_instance.get("key")
-
-All functions of the gila class are available in the singleton instance
-with the addition of ``gila.reset()``, which will reset the singleton
-instance back to empty.
-
-Simple Example Usage:
+Example Usage:
 
 ::
 
@@ -63,11 +55,6 @@ Simple Example Usage:
 .. _Viper: https://github.com/spf13/viper
 .. _12Factor: https://12factor.net/
 
-Requirements
-------------
-
-Requires Python 3.6+
-
 Features
 --------
 
@@ -77,6 +64,27 @@ Features
 * Load in environment variables automatically that have a specific prefix
 * Support most popular config languages: `yaml, toml, json, properties files, hcl, dotenv`
 * Singleton pattern for ease of use in most applications
+
+You can either use the Gila library as a singleton pattern, by using
+
+::
+
+    import gila
+
+    gila.get("key")
+
+or you can create an instance to use in your application like this
+
+::
+
+    import gila
+
+    gila_instance = Gila()
+    gila_instance.get("key")
+
+All functions of the gila class are available in the singleton instance
+with the addition of ``gila.reset()``, which will reset the singleton
+instance back to empty.
 
 Contents
 -----------------------
