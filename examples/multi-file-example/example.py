@@ -18,7 +18,7 @@ def print_welcome():
 gila.set_default("noun", "home")
 gila.set_config_name("config")
 gila.add_config_path('./')
-gila.read_in_config()
+gila.read_config_file()
 
 """Output:
 Welcome to Hawaii, Test User
@@ -41,7 +41,7 @@ g2 = gila.Gila()
 g1.set_default("noun", "home")
 g1.set_config_name("config")
 g1.add_config_path('./')
-g1.read_in_config()
+g1.read_config_file()
 
 """Output:
 Welcome to Hawaii, Test User

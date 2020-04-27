@@ -35,7 +35,7 @@ print(f'Insecure allowed: {allow_insecure}')
 
 # Let's read in from a file
 gila.set_config_file('config.yml')
-gila.read_in_config()
+gila.read_config_file()
 
 # Now let's gather all the configs for easy usage
 """Output:
