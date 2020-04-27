@@ -38,7 +38,7 @@ gila.automatic_env()
 
 # Read in an additional config file
 gila.set_config_file('config.yml')
-gila.read_in_config()
+gila.read_config_file()
 
 # create some example configs
 aliases = {

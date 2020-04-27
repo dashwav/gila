@@ -8,7 +8,7 @@ import gila  # noqa
 
 # Reading in our example config file.
 gila.set_config_file('config.yml')
-gila.read_in_config()
+gila.read_config_file()
 
 # This is the preferred method for grabbing parameters
 # This will resolve the key in the hierarchical fashion

@@ -677,7 +677,7 @@ def remove_override(key: str):
 
 
 def read_config_file():
-    # Singleton function for Gila.read_in_config
+    # Singleton function for Gila.read_config_file
     return _gila.read_config_file()
 
 
