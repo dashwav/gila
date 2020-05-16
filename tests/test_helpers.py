@@ -1,6 +1,7 @@
 import unittest
 
-from gila.util.helpers import deep_search
+from gila.util.helpers import deep_search, dict_merge
+from gila.gila import _allowed_falsy_values
 
 
 class TestDeepSearch(unittest.TestCase):
@@ -68,6 +69,17 @@ class TestDeepSearch(unittest.TestCase):
         # Returned dict is reference to haystack
         deepest_dict['test'] = True
         self.assertIsNotNone(haystack['foo']['bar']['baz']['test'])
+
+
+class TestDictMerge(unittest.TestCase):
+
+    def test_dict_merge_with_falsy_values(self):
+        dict_1, dict_2 = ({}, {})
+        for index, falsy_value in enumerate(_allowed_falsy_values):
+            dict_1[index] = falsy_value
+            dict_2[index] = 'value to overwrite'
+        merged_dict = dict_merge(dict_1, dict_2)
+        self.assertEqual(merged_dict, dict_1)
 
 
 if __name__ == '__main__':

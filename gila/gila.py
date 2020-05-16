@@ -45,6 +45,7 @@ _supported_exts = [
     ".env",
     ]
 _key_delim = "."
+_allowed_falsy_values = ([], (), {}, set(), '', range(0), 0, 0.0, 0j, False)
 
 __all__ = [
     "ConfigNotSupported",
@@ -229,7 +230,7 @@ class Gila():
 
         # Search overrides
         found_value = self.__search_dict(self.__overrides, path)
-        if found_value or found_value in [False]:
+        if found_value or found_value in _allowed_falsy_values:
             return found_value
         path_shadow = self.__is_path_shadowed_in_flat_dict(
             path, self.__overrides)
@@ -239,7 +240,7 @@ class Gila():
         # Search ENV vars
         if self.__automatic_env_applied:
             value = os_env.get(self.__merge_with_env_prefix(key))
-            if value or value in [False]:
+            if value or value in _allowed_falsy_values:
                 return value
             path_shadow = self.__is_path_shadowed_in_auto_env(path)
             if nested and path_shadow:
@@ -248,7 +249,7 @@ class Gila():
         if key in self.__env:
             env_key = self.__env[key]
             value = os_env.get(env_key)
-            if value or value in [False]:
+            if value or value in _allowed_falsy_values:
                 return value
         path_shadow = self.__is_path_shadowed_in_flat_dict(path, self.__env)
         if nested and path_shadow:
@@ -256,14 +257,14 @@ class Gila():
 
         # Search Config vars
         value = self.__search_dict_with_prefix(self.__config, path)
-        if value or value in [False]:
+        if value or value in _allowed_falsy_values:
             return value
         path_shadow = self.__is_path_shadowed_in_deep_dict(path, self.__config)
         if nested and path_shadow:
             return None
 
         value = self.__search_dict(self.__defaults, path)
-        if value or value in [False]:
+        if value or value in _allowed_falsy_values:
             return value
         return None
 

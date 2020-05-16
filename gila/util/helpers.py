@@ -163,13 +163,14 @@ def dict_merge(dict_1: dict, dict_2: dict):
     """Merge two dictionaries.
 
     `dict_1` > `dict_2`
-    Works by creating set of all keys between two dictionaries.
-    Then iterates through and gathers values from first dict_1
-    if present, else falls back to dict_2.
+    Creates a dictionary that has all keys and values from dict2
+    and dict1. For any keys in common, the value from dict1
+    overwrites the value from dict2
+    This allows falsey values such as False and 0 to be included
+    as config values.
 
     :params dict_1: the primary dictionary to pull results from
     :params dict_2: the secondary dictionary to pull results from
     """
-    keys = [key for key in set().union(dict_1, dict_2)]
-    return dict((key, dict_1.get(key) or dict_2.get(key))
-                for key in keys)
+
+    return {**dict_2, **dict_1}

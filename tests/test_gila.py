@@ -30,6 +30,26 @@ class TestBaseGila(unittest.TestCase):
         self.assertEqual(gila.get(key), value)
         self.assertIsNone(gila.get('notset'))
 
+    def test_merging_values_falsy(self):
+        config_key = "filetype"
+        alias_key = "alias_filetype"
+        gila.register_alias(alias_key, config_key)
+
+        for falsy_value in gila.gila._allowed_falsy_values:
+            gila.override(config_key, falsy_value)
+
+            gila.set_env_prefix('GILA')
+            os_env[f'GILA_{config_key.upper()}'] = 'env value'
+            gila.bind_env(f'gila_{config_key}')
+
+            gila.set_config_file('./tests/configs/yaml_config.yaml')
+            gila.read_config_file()
+
+            gila.set_default(config_key, 'default value')
+
+            self.assertEqual(gila.get(config_key), falsy_value)
+            self.assertEqual(gila.get(alias_key), falsy_value)
+
     def test_setting_values_with_alias(self):
         key = "key"
         value = "value"
