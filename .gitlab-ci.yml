@@ -87,5 +87,6 @@ deploy:
   only:
     - tags
   script:
+    - ./update-version.sh
     - pip install twine
     - twine upload dist/*
