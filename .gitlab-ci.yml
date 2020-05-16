@@ -73,6 +73,7 @@ build:
   only:
     - tags
   script:
+    - ./update-version.sh
     - python setup.py bdist_wheel
     # an alternative approach is to install and run:
     - pip install dist/*
@@ -87,6 +88,5 @@ deploy:
   only:
     - tags
   script:
-    - ./update-version.sh
     - pip install twine
     - twine upload dist/*
